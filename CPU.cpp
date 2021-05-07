@@ -242,7 +242,7 @@ void CPU::mov_r32_imm(uint8_t opcode)
 void CPU::int_imm8()
 {
     uint8_t interrupt = ram->read(eip++);
-    //printf("INT 0x%x\n", interrupt);
+    printf("INT 0x%x\n", interrupt);
     if (!proted && eflags->IF == 0)
     {
         eflags->IF = 1; // Make other interrupts wait
