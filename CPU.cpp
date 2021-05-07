@@ -4,7 +4,9 @@
 #include <cstdio>
 
 // TODO: Add optional debug tracing
-// TODO: Move all this into an auxillary file
+// TODO: Move all utility functions into an auxillary file
+// TODO: Lots of OPCODES! Also, I probably need to figure out the ModR/M format, this hacky stuff isn't
+// Going to work forever (probably)
 
 bool getParity(unsigned int n)
 {
@@ -140,7 +142,7 @@ void CPU::Execute(uint8_t opcode)
         updateEflags(r8, rm8, result);
         if (ax.l != result)
         {
-            SetCarry(1);
+            SetCarry(1); // Really hacky, but it works!
         }
         if (getParity(ax.l))
         {
@@ -263,6 +265,7 @@ void CPU::Dump()
 {
     // We add a newline in front to avoid conflicting with any int 0x10 characters
     printf("\nAL: 0x%02x AH: 0x%02x AX: 0x%04x EAX: 0x%04x\n", ax.l, ax.h, ax.hl, ax.reg);
+    printf("BL: 0x%02x BH: 0x%02x BX: 0x%04x EBX: 0x%04x\n", bx.l, bx.h, bx.hl, bx.reg);
     printf("ESP: 0x%x\n", sp.ei);
     printf("EIP: 0x%x\n", eip);
     printflags();
