@@ -14,6 +14,49 @@ add al, 1
 int 0x10
 add al, 1
 int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+
 
 cli
 hlt

@@ -21,10 +21,6 @@ int main(int argc, char **argv)
     fseek(f, 0, SEEK_SET);
     fread(buf, 1, size, f);
     memcpy(ram->mem + 0x7c00, buf, 512);
-    for (int i = 0; i < 513; i++)
-    {
-        printf("0x%x:\t0x%02x\n", i + 0x7c00, ram->read(0x7c00 + i));
-    }
     printf("Booting from harddisk...\n");
     if (ram->read(0x7c00 + 510) == 0x55 && ram->read(0x7c00 + 511) == 0xAA)
     {
