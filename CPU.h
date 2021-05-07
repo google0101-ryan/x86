@@ -65,6 +65,7 @@ public:
     void updateEflags(uint8_t value1, uint8_t value2, uint16_t result);
     void SetCarry(int is_carry);
     uint8_t getop(uint8_t opcode);
+    void SetOverflow(int is_overflow);
 private:
     Memory *ram;
     regs ax, bx, cx, dx;

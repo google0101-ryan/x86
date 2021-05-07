@@ -1,4 +1,5 @@
 org 0x7c00
+bits 16
 
 mov sp, stack
 
@@ -56,7 +57,82 @@ add al, 1
 int 0x10
 add al, 1
 int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
+add al, 1
+int 0x10
 
+add al, 0x81
 
 cli
 hlt

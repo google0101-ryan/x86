@@ -5,6 +5,17 @@
 
 // TODO: Add optional debug tracing
 
+bool getParity(unsigned int n)
+{
+    bool parity = 0;
+    while (n)
+    {
+        parity = !parity;
+        n = n & (n - 1);
+    }
+    return parity;
+}
+
 void CPU::SetCarry(int is_carry)
 {
     if (is_carry)
@@ -16,12 +27,24 @@ void CPU::SetCarry(int is_carry)
     }
 }
 
+void CPU::SetOverflow(int is_overflow)
+{
+    if (is_overflow)
+    {
+        eflags->OF = 1;
+    } else
+    {
+        eflags->OF = 0;
+    }
+}
+
 void CPU::updateEflags(uint8_t value1, uint8_t value2, uint16_t result)
 {
     int sign1 = value1 >> 7;
     int sign2 = value2 >> 7;
     int signr = (result >> 7) & 1;
-    SetCarry(result << 8);
+    //SetCarry(result != value1 + value2);
+    SetOverflow(sign1 == sign2 && sign1 != signr);
 }
 
 void CPU::printflags()
@@ -113,9 +136,18 @@ void CPU::Execute(uint8_t opcode)
         uint8_t rm8 = data;
         uint16_t result = (uint16_t)r8 + (uint16_t)rm8;
         ax.l = result;
-        if (ax.l != (r8 + rm8))
+        updateEflags(r8, rm8, result);
+        if (ax.l != result)
         {
-            SetCarry(1); // Kinda hacky
+            SetCarry(1);
+        }
+        if (getParity(ax.l))
+        {
+            eflags->PF = 1;
+        }
+        if (ax.l == 0)
+        {
+            eflags->ZF = 1;
         }
     }
     break;
@@ -123,8 +155,8 @@ void CPU::Execute(uint8_t opcode)
     if (opcode < 0xB8 && prefix != 0x66)
     {
         mov_r8_imm(opcode);
-    } else if (opcode >= 0xB8 && prefix == 0x66) {
-        mov_r32_imm(opcode);
+    } else if (prefix == 0x66) {
+        mov_r32_imm(op);
     } else {
         mov_r16_imm(opcode);
     }
@@ -143,7 +175,7 @@ void CPU::Execute(uint8_t opcode)
         halted = true;
         break;
     default:
-        //printf("UNKNOWN OPCODE: 0x%x\n", op);
+        printf("UNKNOWN OPCODE: 0x%x\n", op);
         break;
     }
 }
@@ -187,22 +219,22 @@ void CPU::mov_r16_imm(uint8_t opcode)
 
 void CPU::mov_r32_imm(uint8_t opcode)
 {
-    if (proted && (cr0 & (1 << 0)) >> 0)
+    uint8_t reg = opcode - 0xB0;
+    //printf("MOV CODE 0x%x\n", opcode);
+    uint32_t data;
+    data = ram->read(physaddr(eip++, cs));
+    data |= ram->read(physaddr(eip++, cs)) << 8;
+    data |= ram->read(physaddr(eip++, cs)) << 16;
+    data |= ram->read(physaddr(eip++, cs)) << 24;
+    //printf("DATA: 0x%x\n", data);
+    switch (reg)
     {
-        uint8_t reg = opcode - 0xB8;
-        uint32_t data;
-        for (int i = 0; i < 4; i++)
-        {
-            data |= ram->read(physaddr(eip++, cs)) << (i * 8);
-        }
-        switch (reg)
-        {
-        case 0x0:
-            ax.reg = data;
-        }
-    } else {
-        printf("GENERAL PROTECTION FAULT!\n");
-        halted = true;
+    case 0x0:
+        ax.reg = data;
+        break;
+    default:
+        printf("UNKNOWN REGCODE 0x%x\n", reg);
+        break;
     }
 }
 
@@ -231,5 +263,6 @@ void CPU::Dump()
     // We add a newline in front to avoid conflicting with any int 0x10 characters
     printf("\nAL: 0x%02x AH: 0x%02x AX: 0x%04x EAX: 0x%04x\n", ax.l, ax.h, ax.hl, ax.reg);
     printf("ESP: 0x%x\n", sp.ei);
+    printf("EIP: 0x%x\n", eip);
     printflags();
 }
