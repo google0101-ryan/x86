@@ -4,6 +4,7 @@
 #include <cstdio>
 
 // TODO: Add optional debug tracing
+// TODO: Move all this into an auxillary file
 
 bool getParity(unsigned int n)
 {
