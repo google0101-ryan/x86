@@ -103,6 +103,7 @@ void CPU::Reset()
     idtr.base = gdtr.base = ldtr.base = 0;
     idtr.limit = gdtr.limit = ldtr.base = 0;
     memset(eflags, 0, sizeof(eflags));
+    eflags->IF = 1;
     eflags->reserved = 1;
     eflags->reserved2 = 1;
     eflags->reserved3 = 1;
@@ -168,7 +169,7 @@ void CPU::Execute(uint8_t opcode)
         int_imm8();
         break;
     case 0xF0: // CLI
-        eflags->IF = 1;
+        eflags->IF = 0;
         break;
     case 0xAC: // LODSB
         ax.l = ram->read(si.i);
@@ -246,9 +247,9 @@ void CPU::int_imm8()
 {
     uint8_t interrupt = ram->read(eip++);
     //printf("INT 0x%x\n", interrupt);
-    if (!proted && eflags->IF == 0)
+    if (!proted && eflags->IF == 1)
     {
-        eflags->IF = 1; // Make other interrupts wait
+        eflags->IF = 0; // Make other interrupts wait
         switch (interrupt)
         {
         case 0x10:
@@ -257,14 +258,14 @@ void CPU::int_imm8()
                 printf("%c", ax.l);
             }
         }
-        eflags->IF = 0;
+        eflags->IF = 1;
     }
 }
 
 void CPU::Dump()
 {
     // We add a newline in front to avoid conflicting with any int 0x10 characters
-    printf("\nAL: 0x%02x AH: 0x%02x AX: 0x%04x EAX: 0x%04x\n", ax.l, ax.h, ax.hl, ax.reg);
+    printf("\n\nAL: 0x%02x AH: 0x%02x AX: 0x%04x EAX: 0x%04x\n", ax.l, ax.h, ax.hl, ax.reg);
     printf("BL: 0x%02x BH: 0x%02x BX: 0x%04x EBX: 0x%04x\n", bx.l, bx.h, bx.hl, bx.reg);
     printf("CL: 0x%02x CH: 0x%02x CX: 0x%04x ECX: 0x%04x\n", cx.l, cx.h, cx.hl, cx.reg);
     printf("ESP: 0x%x\n", sp.ei);

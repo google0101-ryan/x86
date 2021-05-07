@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     fseek(f, 0, SEEK_SET);
     fread(buf, 1, size, f);
     memcpy(ram->mem + 0x7c00, buf, 512);
-    printf("Booting from harddisk...\n");
+    printf("Booting from harddisk...\n\n");
     if (ram->read(0x7c00 + 510) == 0x55 && ram->read(0x7c00 + 511) == 0xAA)
     {
         i386->Execute();
