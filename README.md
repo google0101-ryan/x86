@@ -14,4 +14,6 @@ finally, ```./x86```
 
 I probably am doing this wrong, so if you have a suggestion, open an issue. If you have a fix or want to contribute, open a pull request.
 
+Currently, the test suite prints every number in the ASCII character set then uses add to set al to zero. This tests the C, Z, P, and O flags. It also tests int 0x10, ah=0xe
+
 Have fun!
