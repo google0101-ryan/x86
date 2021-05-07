@@ -55,6 +55,7 @@ public:
     void Execute(uint8_t opcode);
     void mov_r8_imm(uint8_t opcode);
     void mov_r16_imm(uint8_t opcode);
+    void mov_r32_imm(uint8_t opcode);
     void Execute();
     void int_imm8();
     uint32_t physaddr(uint32_t offset, uint16_t seg);
@@ -63,6 +64,7 @@ public:
     void printflags();
     void updateEflags(uint8_t value1, uint8_t value2, uint16_t result);
     void SetCarry(int is_carry);
+    uint8_t getop(uint8_t opcode);
 private:
     Memory *ram;
     regs ax, bx, cx, dx;
@@ -73,6 +75,7 @@ private:
     uint32_t eip;
     uint32_t cr0, cr1, cr2, cr3, cr4; // Currently useless
     dtr gdtr, idtr, ldtr;
+    uint8_t prefix;
     bool halted;
     bool proted;
 };

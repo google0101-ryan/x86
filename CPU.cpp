@@ -41,8 +41,13 @@ void CPU::printflags()
     
 }
 
-uint8_t getop(uint8_t opcode)
+uint8_t CPU::getop(uint8_t opcode)
 {
+    if (opcode == 0x66)
+    {
+        prefix = 0x66;
+        return getop(ram->read(physaddr(eip++, cs)));
+    }
     if (opcode != 0x04 && opcode != 0xCD && opcode != 0xF0 && opcode != 0xAC && opcode != 0xF4)
     {
         return (opcode & 0xF0);
@@ -115,9 +120,11 @@ void CPU::Execute(uint8_t opcode)
     }
     break;
     case 0xb0: // MOV
-    if (opcode < 0xB8)
+    if (opcode < 0xB8 && prefix != 0x66)
     {
         mov_r8_imm(opcode);
+    } else if (opcode >= 0xB8 && prefix == 0x66) {
+        mov_r32_imm(opcode);
     } else {
         mov_r16_imm(opcode);
     }
@@ -164,17 +171,41 @@ void CPU::mov_r8_imm(uint8_t opcode)
 
 void CPU::mov_r16_imm(uint8_t opcode)
 {
-    uint16_t data = ram->read(physaddr(eip++, cs));
-    data |= ram->read(physaddr(eip++, cs)) << 8;
     uint8_t reg = opcode - 0xB8;
     switch(reg)
     {
     case 0x4:
+    {
+        uint16_t data = ram->read(physaddr(eip++, cs));
+        data |= ram->read(physaddr(eip++, cs)) << 8;
         sp.ei = data;
         //printf("MOV SP, 0x%04x\n", data);
+    }
         break;
     }
 }
+
+void CPU::mov_r32_imm(uint8_t opcode)
+{
+    if (proted && (cr0 & (1 << 0)) >> 0)
+    {
+        uint8_t reg = opcode - 0xB8;
+        uint32_t data;
+        for (int i = 0; i < 4; i++)
+        {
+            data |= ram->read(physaddr(eip++, cs)) << (i * 8);
+        }
+        switch (reg)
+        {
+        case 0x0:
+            ax.reg = data;
+        }
+    } else {
+        printf("GENERAL PROTECTION FAULT!\n");
+        halted = true;
+    }
+}
+
 // Interrupts
 void CPU::int_imm8()
 {
