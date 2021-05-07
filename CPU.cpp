@@ -266,6 +266,7 @@ void CPU::Dump()
     // We add a newline in front to avoid conflicting with any int 0x10 characters
     printf("\nAL: 0x%02x AH: 0x%02x AX: 0x%04x EAX: 0x%04x\n", ax.l, ax.h, ax.hl, ax.reg);
     printf("BL: 0x%02x BH: 0x%02x BX: 0x%04x EBX: 0x%04x\n", bx.l, bx.h, bx.hl, bx.reg);
+    printf("CL: 0x%02x CH: 0x%02x CX: 0x%04x ECX: 0x%04x\n", cx.l, cx.h, cx.hl, cx.reg);
     printf("ESP: 0x%x\n", sp.ei);
     printf("EIP: 0x%x\n", eip);
     printflags();
