@@ -66,7 +66,7 @@ private:
     idxr sp, bp;
     uint16_t cs, ds, es, fs, gs, ss;
     uint32_t eip;
-    uint32_t cr0, cr1, cr2, cr3, cr4;
+    uint32_t cr0, cr1, cr2, cr3, cr4; // Currently useless
     bool halted;
     bool proted;
 };
