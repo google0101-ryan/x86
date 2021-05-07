@@ -39,6 +39,11 @@ typedef struct
     uint8_t reserved4: 1;
 } flags;
 
+typedef struct
+{
+    uint16_t limit;
+    uint32_t base; 
+} dtr;
 
 
 class CPU
@@ -67,6 +72,7 @@ private:
     uint16_t cs, ds, es, fs, gs, ss;
     uint32_t eip;
     uint32_t cr0, cr1, cr2, cr3, cr4; // Currently useless
+    dtr gdtr, idtr, ldtr;
     bool halted;
     bool proted;
 };

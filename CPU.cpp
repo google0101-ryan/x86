@@ -67,6 +67,10 @@ CPU::CPU(Memory* mem)
 void CPU::Reset()
 {
     ax.reg = bx.reg = cx.reg = dx.reg;
+    cs = ds = es = fs = gs = ss = 0;
+    cr0 = cr1 = cr2 = cr3 = cr4 = 0;
+    idtr.base = gdtr.base = ldtr.base = 0;
+    idtr.limit = gdtr.limit = ldtr.base = 0;
     memset(eflags, 0, sizeof(eflags));
     eflags->reserved = 1;
     eflags->reserved2 = 1;
