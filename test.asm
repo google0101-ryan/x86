@@ -23,7 +23,10 @@ print:
 done:
     jmp cont
 
+[bits 32]
 halt:
+    mov ax, 0
+    mov ds, ax
     hlt
 
 gdt_start: ; Don't remove the labels, they're needed to compute sizes and jumps

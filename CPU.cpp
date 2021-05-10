@@ -164,13 +164,25 @@ void CPU::Execute(uint8_t opcode)
     }
     break;
     case 0xb0: // MOV
-    if (opcode < 0xB8 && prefix != 0x66)
+    if (!proted)
     {
-        mov_r8_imm(opcode);
-    } else if (prefix == 0x66) {
-        mov_r32_imm(op);
+        if (opcode < 0xB8 && prefix != 0x66)
+        {
+            mov_r8_imm(opcode);
+        } else if (prefix == 0x66) {
+            mov_r32_imm(op);
+        } else {
+            mov_r16_imm(opcode);
+        }
     } else {
-        mov_r16_imm(opcode);
+        if (opcode < 0xB8 && prefix != 0x66)
+        {
+            mov_r8_imm(opcode);
+        } else if (prefix == 0x66) {
+            mov_r16_imm(op);
+        } else {
+            mov_r32_imm(opcode);
+        }
     }
         break;
     case 0xCD: // INT
@@ -343,6 +355,13 @@ void CPU::mov_r16_imm(uint8_t opcode)
     uint8_t reg = opcode - 0xB8;
     switch(reg)
     {
+    case 0x0:
+    {
+        uint16_t data = ram->read(physaddr(eip++, cs));
+        data |= ram->read(physaddr(eip++, cs)) << 8;
+        ax.hl = data;
+    }
+    break;
     case 0x4:
     {
         uint16_t data = ram->read(physaddr(eip++, cs));
@@ -351,6 +370,18 @@ void CPU::mov_r16_imm(uint8_t opcode)
         //printf("MOV SP, 0x%04x\n", data);
     }
     break;
+    case 0x06:
+    {
+        uint8_t reg = ram->read(physaddr(eip++, cs));
+        switch (reg)
+        {
+        case 0xd8:
+            ds = ax.hl;
+            break;
+        default:
+            break;
+        }
+    }
     case 0x36:
     {
         uint16_t data = ram->read(physaddr(eip++, cs));
@@ -414,5 +445,6 @@ void CPU::Dump()
     printf("ESP: 0x%x\n", sp.ei);
     printf("EIP: 0x%x\n", eip);
     printf("CR0: 0x%04x (PE: %s)\n", cr0, cr0 & 1 ? "1" : "0");
+    printf("CS: 0x%02x DS: 0x%02x ES: 0x%02x\n", cs, ds, es);
     printflags();
 }
