@@ -214,7 +214,7 @@ void CPU::Reset()
     cr0 = cr1 = cr2 = cr3 = cr4 = 0;
     idtr.base = gdtr.base = ldtr.base = 0;
     idtr.limit = gdtr.limit = ldtr.base = 0;
-    memset(eflags, 0, sizeof(eflags));
+    memset(eflags, 0, sizeof(*eflags));
     eflags->IF = 1;
     eflags->reserved = 1;
     eflags->reserved2 = 1;
@@ -519,6 +519,7 @@ void CPU::mov_r16_imm(uint8_t opcode)
         default:
             break;
         }
+        break;
     }
     case 0x36:
     {
