@@ -1,14 +1,29 @@
 org 0x7c00
 
 start:
+    mov ah, 0x0e
+    mov si, [msg]
+    jmp print
+cont:
     cli
     lgdt [gdt_descriptor]
     mov eax, cr0
     or eax, 0x1
     mov cr0, eax
-    jmp CODE_SEG:done
+    jmp CODE_SEG:halt
+
+print:
+    lodsb
+    cmp al, 0
+    je done
+
+    int 0x10
+    jmp print
 
 done:
+    jmp cont
+
+halt:
     hlt
 
 gdt_start: ; Don't remove the labels, they're needed to compute sizes and jumps
@@ -46,6 +61,8 @@ gdt_descriptor:
 ; define some constants for later use
 CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
+
+msg: db "Jumping to protected mode...", 0
 
 times 510 - ($ - $$) db 0
 dw 0xaa55
