@@ -49,7 +49,7 @@ typedef struct
 class CPU
 {
 public:
-    CPU(Memory *mem);
+    CPU(Memory *mem, bool debug);
     void Reset();
     void Clock();
     void Execute(uint8_t opcode);
@@ -58,7 +58,7 @@ public:
     void mov_r32_imm(uint8_t opcode);
     void Execute();
     void int_imm8();
-    uint32_t physaddr(uint32_t offset, uint16_t seg);
+    uint32_t physaddr(uint32_t offset, uint16_t seg, uint8_t write);
     void Dump();
     void add_rm8_r8();
     void printflags();
@@ -66,6 +66,7 @@ public:
     void SetCarry(int is_carry);
     uint8_t getop(uint8_t opcode);
     void SetOverflow(int is_overflow);
+    uint32_t getlinearaddr(uint16_t seg, uint32_t offset, uint8_t write, uint8_t exec);
 private:
     Memory *ram;
     regs ax, bx, cx, dx;
@@ -80,4 +81,5 @@ private:
     bool halted;
     bool proted;
     bool isEqual;
+    bool debug;
 };
