@@ -23,6 +23,7 @@ int main(int argc, char **argv)
     printf("Allocating RAM...\n");
     Memory* ram = new Memory(1073741824); // 1GB of RAM
     printf("Creating CPU...\n");
+    // Intel Inside!
     CPU* i386 = new CPU(ram, debug);
     FILE *f = fopen("test", "rb");
     uint8_t buf[512];

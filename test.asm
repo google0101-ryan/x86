@@ -27,6 +27,7 @@ done:
 halt:
     mov ax, 0
     mov ds, ax
+    add al, 0xFF
     hlt
 
 gdt_start: ; Don't remove the labels, they're needed to compute sizes and jumps

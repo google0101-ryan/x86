@@ -271,7 +271,7 @@ void CPU::Execute(uint8_t opcode)
             eflags->ZF = 1;
         }
         if (debug)
-        printf("ADD AL, 0x%x", data);
+        printf("ADD AL, 0x%x\n", data);
     }
     break;
     case 0xb0: // MOV
@@ -583,6 +583,7 @@ void CPU::Dump()
     printf("\n\nAL: 0x%02x AH: 0x%02x AX: 0x%04x EAX: 0x%04x\n", ax.l, ax.h, ax.hl, ax.reg);
     printf("BL: 0x%02x BH: 0x%02x BX: 0x%04x EBX: 0x%04x\n", bx.l, bx.h, bx.hl, bx.reg);
     printf("CL: 0x%02x CH: 0x%02x CX: 0x%04x ECX: 0x%04x\n", cx.l, cx.h, cx.hl, cx.reg);
+    printf("DL: 0x%02x DH: 0x%02x DX: 0x%04x EDX: 0x%04x\n", dx.l, dx.h, dx.hl, dx.reg);
     printf("SI: 0x%02x ESI: 0x%02x\n", si.i, si.ei);
     printf("GDT: limit: 0x%x base 0x%04x\n", gdtr.limit, gdtr.base);
     printf("ESP: 0x%x\n", sp.ei);
