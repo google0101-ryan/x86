@@ -79,4 +79,5 @@ private:
     uint8_t prefix;
     bool halted;
     bool proted;
+    bool isEqual;
 };

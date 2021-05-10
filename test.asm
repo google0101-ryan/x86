@@ -1,145 +1,26 @@
 org 0x7c00
-bits 16
 
-mov sp, stack
+start:
+    mov sp, 0x1000
+    mov ah, 0x0e
+    mov si, [msg]
 
-mov ah, 0x0e
-mov al, 'A'
-int 0x10
+print:
+    lodsb
+    cmp al, 0
+    je done
 
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
-add al, 1
-int 0x10
+    int 0x10
+    jmp print
 
-add al, 0x81
+done:
+    mov al, 0x0a
+    int 0x10
+    mov al, 0x0d
+    int 0x10
+    hlt
 
-cli
-hlt
+msg: db '`1234567890-=~!@#%^&*()_+qwertyuiop[]\QWERTYUIOP{}|asdfhjkl;ASDFGHJKL:zxcvbnm,./ZXCVBNM<>?', 0
 
 times 510 - ($ - $$) db 0
 dw 0xaa55
-
-section .bss
-stack:
-    resb 4096

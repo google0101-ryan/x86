@@ -1,0 +1,17 @@
+Allocating RAM...
+Creating CPU...
+Booting from harddisk...
+
+UNKNOWN OPCODE: 0x70
+UNKNOWN OPCODE: 0x10
+UNKNOWN OPCODE: 0xe0
+
+
+AL: 0x3e AH: 0x0e AX: 0x0e3e EAX: 0x0e3e
+BL: 0x00 BH: 0x00 BX: 0x0000 EBX: 0x0000
+CL: 0x00 CH: 0x00 CX: 0x0000 ECX: 0x0000
+SI: 0x7c10 ESI: 0x7c10
+ESP: 0x0
+EIP: 0x7c10
+FLAGS:
+CF: 1 PF: 1 AF: 0 ZF: 0 SF: 0 TF: 0 IF: 0 DF: 0 OF: 0 IOPL: 0 NT: 0

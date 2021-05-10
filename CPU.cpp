@@ -74,7 +74,9 @@ uint8_t CPU::getop(uint8_t opcode)
         prefix = 0x66;
         return getop(ram->read(physaddr(eip++, cs)));
     }
-    if (opcode != 0x04 && opcode != 0xCD && opcode != 0xF0 && opcode != 0xAC && opcode != 0xF4)
+    if (opcode != 0x04 && opcode != 0xCD && opcode != 0xF0 && 
+    opcode != 0xAC && opcode != 0xF4 && opcode != 0x8b && opcode != 0xe9 &&
+    opcode != 0x3C && opcode != 0x74 && opcode != 0xeb)
     {
         return (opcode & 0xF0);
     } else {
@@ -110,6 +112,7 @@ void CPU::Reset()
     eflags->reserved4 = 0;
     eip = 0x7c00;
     proted = false;
+    isEqual = false;
 }
 
 void CPU::Execute()
@@ -131,6 +134,10 @@ void CPU::Execute(uint8_t opcode)
     uint8_t op = getop(opcode);
     //printf("Opcode: 0x%x\n", opcode);
     //printf("Op: 0x%x\n", op);
+    if (opcode == 0x0f)
+    {
+        op = ram->read(physaddr(eip++, cs));
+    }
     switch(op)
     {
     case 0x04:
@@ -173,13 +180,54 @@ void CPU::Execute(uint8_t opcode)
         break;
     case 0xAC: // LODSB
         ax.l = ram->read(si.i);
+        si.i++;
         break;
     case 0xF4: // HLT
         //printf("HLT\n");
         halted = true;
         break;
+    case 0x8b:
+    {
+        if ((ram->read(physaddr(eip++, cs))) == 0x36)
+        {
+            mov_r16_imm(0xEE);
+        }
+        break;
+    }
+    case 0xe9:
+    {
+        int32_t rel = ram->read(physaddr(eip++, cs));
+        rel |= ram->read(physaddr(eip++, cs)) << 8;
+        rel |= ram->read(physaddr(eip++, cs)) << 16;
+        rel |= ram->read(physaddr(eip++, cs)) << 24;
+        eip += (rel + 5);
+        break;
+    }
+    case 0xeb:
+    {
+        int8_t rel = ram->read(physaddr(eip++, cs));
+        eip += rel;
+        break;
+    }
+    case 0x3C:
+    {
+        if (ax.l == ram->read(physaddr(eip++, cs)))
+        {
+            isEqual = true;
+        }
+        break;
+    }
+    case 0x74:
+    {
+        uint8_t rel = ram->read(physaddr(eip++, cs));
+        if (isEqual)
+        {
+            eip += rel;
+        }
+        break;
+    }
     default:
-        printf("UNKNOWN OPCODE: 0x%x\n", op);
+        //printf("UNKNOWN OPCODE: 0x%x\n", op);
         break;
     }
 }
@@ -216,6 +264,13 @@ void CPU::mov_r16_imm(uint8_t opcode)
         data |= ram->read(physaddr(eip++, cs)) << 8;
         sp.ei = data;
         //printf("MOV SP, 0x%04x\n", data);
+    }
+    break;
+    case 0x36:
+    {
+        uint16_t data = ram->read(physaddr(eip++, cs));
+        data |= ram->read(physaddr(eip++, cs)) << 8;
+        si.i = data;
     }
         break;
     }
@@ -268,6 +323,7 @@ void CPU::Dump()
     printf("\n\nAL: 0x%02x AH: 0x%02x AX: 0x%04x EAX: 0x%04x\n", ax.l, ax.h, ax.hl, ax.reg);
     printf("BL: 0x%02x BH: 0x%02x BX: 0x%04x EBX: 0x%04x\n", bx.l, bx.h, bx.hl, bx.reg);
     printf("CL: 0x%02x CH: 0x%02x CX: 0x%04x ECX: 0x%04x\n", cx.l, cx.h, cx.hl, cx.reg);
+    printf("SI: 0x%02x ESI: 0x%02x\n", si.i, si.ei);
     printf("ESP: 0x%x\n", sp.ei);
     printf("EIP: 0x%x\n", eip);
     printflags();
