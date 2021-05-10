@@ -243,7 +243,7 @@ void CPU::Execute(uint8_t opcode)
             base |= ram->read(physaddr(address + 4, ds)) << 16;
             base |= ram->read(physaddr(address + 5, ds)) << 24;
             gdtr.base = physaddr(base, ds);
-            printf("LGDT 0x%02x\n", address);
+            //printf("LGDT 0x%02x\n", address);
         }
         break;
     }
@@ -301,7 +301,7 @@ void CPU::Execute(uint8_t opcode)
         }
         cs = cs_val;
         eip = eip_val;
-        printf("LJMP 0x%02x\n", eip_val);
+        //printf("LJMP 0x%02x\n", eip_val);
         if (proted)
             break;
         uint8_t CR0_PE = cr0 & 1;
