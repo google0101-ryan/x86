@@ -76,7 +76,8 @@ uint8_t CPU::getop(uint8_t opcode)
     }
     if (opcode != 0x04 && opcode != 0xCD && opcode != 0xF0 && 
     opcode != 0xAC && opcode != 0xF4 && opcode != 0x8b && opcode != 0xe9 &&
-    opcode != 0x3C && opcode != 0x74 && opcode != 0xeb)
+    opcode != 0x3C && opcode != 0x74 && opcode != 0xeb && opcode != 0x01 &&
+    opcode != 0x83 && opcode != 0xEA)
     {
         return (opcode & 0xF0);
     } else {
@@ -226,6 +227,90 @@ void CPU::Execute(uint8_t opcode)
         }
         break;
     }
+    case 0x1:
+    {
+        uint8_t data = ram->read(physaddr(eip++, cs));
+        //printf("DATA: 0x%x", data);
+        if (data == 0x16)
+        {
+            uint16_t address = ram->read(physaddr(eip++, cs));
+            address |= ram->read(physaddr(eip++, cs)) << 8;
+            uint16_t limit = ram->read(physaddr(address, ds));
+            limit |= ram->read(physaddr(address + 1, ds)) << 8;
+            gdtr.limit = limit;
+            uint32_t base = ram->read(physaddr(address + 2, ds));
+            base |= ram->read(physaddr(address + 3, ds)) << 8;
+            base |= ram->read(physaddr(address + 4, ds)) << 16;
+            base |= ram->read(physaddr(address + 5, ds)) << 24;
+            gdtr.base = physaddr(base, ds);
+            printf("LGDT 0x%02x\n", address);
+        }
+        break;
+    }
+    case 0x20:
+    {
+        uint8_t data = ram->read(physaddr(eip++, cs));
+        if (data == 0xc0)
+        {
+            ax.reg = cr0;
+        }
+        break;
+    }
+    case 0x22:
+    {
+        uint8_t reg = ram->read(physaddr(eip++, cs));
+        if (reg == 0xc0)
+        {
+            cr0 = ax.reg;
+        }
+        break;
+    }
+    case 0x83:
+    {
+        uint8_t reg = ram->read(physaddr(eip++, cs));
+        uint8_t data = ram->read(physaddr(eip++, cs));
+        if (reg == 0xc8)
+        {
+            ax.reg |= data;
+        }
+        break;
+    }
+    case 0xEA:
+    {
+        uint32_t eip_val;
+        uint16_t cs_val;
+        if (proted)
+        {
+            uint16_t tmp = ram->read(physaddr(eip++, cs));
+            tmp |= ram->read(physaddr(eip++, cs)) << 8;
+            tmp |= ram->read(physaddr(eip++, cs)) << 16;
+            tmp |= ram->read(physaddr(eip++, cs)) << 24;
+            eip = tmp;
+            tmp = ram->read(physaddr(eip++, cs));
+            tmp |= ram->read(physaddr(eip++, cs)) << 8;
+            cs_val = tmp;
+        }
+        else
+        {
+            uint32_t tmp = ram->read(physaddr(eip++, cs));
+            tmp |= ram->read(physaddr(eip++, cs)) << 8;
+            eip_val = tmp;
+            tmp = ram->read(physaddr(eip++, cs));
+            tmp |= ram->read(physaddr(eip++, cs)) << 8;
+            cs_val = tmp;
+        }
+        cs = cs_val;
+        eip = eip_val;
+        printf("LJMP 0x%02x\n", eip_val);
+        if (proted)
+            break;
+        uint8_t CR0_PE = cr0 & 1;
+        uint16_t gdt_index = cs >> 3;
+        uint16_t gdt_entry_count = (gdtr.limit + 1) / 8;
+        if (CR0_PE && gdt_index != 0 && gdt_entry_count > gdt_index)
+            proted = true;
+        break;
+    }
     default:
         //printf("UNKNOWN OPCODE: 0x%x\n", op);
         break;
@@ -274,6 +359,7 @@ void CPU::mov_r16_imm(uint8_t opcode)
     }
         break;
     }
+    
 }
 
 void CPU::mov_r32_imm(uint8_t opcode)
@@ -324,7 +410,9 @@ void CPU::Dump()
     printf("BL: 0x%02x BH: 0x%02x BX: 0x%04x EBX: 0x%04x\n", bx.l, bx.h, bx.hl, bx.reg);
     printf("CL: 0x%02x CH: 0x%02x CX: 0x%04x ECX: 0x%04x\n", cx.l, cx.h, cx.hl, cx.reg);
     printf("SI: 0x%02x ESI: 0x%02x\n", si.i, si.ei);
+    printf("GDT: limit: 0x%04x base 0x%04x\n", gdtr.limit, gdtr.base);
     printf("ESP: 0x%x\n", sp.ei);
     printf("EIP: 0x%x\n", eip);
+    printf("CR0: 0x%04x (PE: %s)\n", cr0, cr0 & 1 ? "1" : "0");
     printflags();
 }
