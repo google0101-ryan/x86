@@ -15,7 +15,3 @@ jobs:
     - uses: actions/checkout@v2
     - name: compile
       run: g++ *.cpp -o x86
-    - name: test
-      run: nasm test.asm
-    - name: run
-      run: ./x86
