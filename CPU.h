@@ -20,23 +20,28 @@ typedef union
     uint32_t ei;
 } idxr;
 
-typedef struct
+
+typedef union
 {
-    uint8_t CF: 1;
-    uint8_t reserved: 1;
-    uint8_t PF: 1;
-    uint8_t reserved2: 1;
-    uint8_t AF: 1;
-    uint8_t reserved3: 1;
-    uint8_t ZF: 1;
-    uint8_t SF: 1;
-    uint8_t TF: 1;
-    uint8_t IF: 1;
-    uint8_t DF: 1;
-    uint8_t OF: 1;
-    uint8_t IOPL: 2;
-    uint8_t NT: 1;
-    uint8_t reserved4: 1;
+    struct
+    {
+        uint8_t CF: 1;
+        uint8_t reserved: 1;
+        uint8_t PF: 1;
+        uint8_t reserved2: 1;
+        uint8_t AF: 1;
+        uint8_t reserved3: 1;
+        uint8_t ZF: 1;
+        uint8_t SF: 1;
+        uint8_t TF: 1;
+        uint8_t IF: 1;
+        uint8_t DF: 1;
+        uint8_t OF: 1;
+        uint8_t IOPL: 2;
+        uint8_t NT: 1;
+        uint8_t reserved4: 1;
+    };
+    uint32_t bits;
 } flags;
 
 typedef struct
@@ -69,10 +74,12 @@ public:
     uint32_t getlinearaddr(uint16_t seg, uint32_t offset, uint8_t write, uint8_t exec);
     void pusheip();
     uint32_t popeip();
+    flags *eflags;
+    uint8_t int_r;
+    void push32(uint32_t value);
 private:
     Memory *ram;
     regs ax, bx, cx, dx;
-    flags *eflags;
     idxr si, di;
     idxr sp, bp;
     uint16_t cs, ds, es, fs, gs, ss;
@@ -80,6 +87,7 @@ private:
     uint32_t cr0, cr1, cr2, cr3, cr4; // Currently useless
     dtr gdtr, idtr, ldtr;
     uint8_t prefix;
+    
     bool halted;
     bool proted;
     bool isEqual;

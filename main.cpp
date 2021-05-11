@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <cstring>
+#include <lapic.h>
 
 #define MP_CONF_TBL_ENT_BASE (0x9FC2C + 44)
 
@@ -43,6 +44,7 @@ int main(int argc, char **argv)
     printf("Creating CPU...\n");
     // Intel Inside!
     CPU* i386 = new CPU(ram, debug);
+    LAPIC* lapic = new LAPIC(i386);
     FILE *f = fopen(argv[1], "rb");
     uint8_t buf[512];
     fseek(f, 0, SEEK_END);

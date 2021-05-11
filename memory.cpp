@@ -23,4 +23,14 @@ void Memory::write32(uint32_t address, uint32_t data)
     write(address + 2, data >> 16);
     write(address + 3, data >> 24);
 }
+
+uint32_t Memory::read32(uint32_t address)
+{
+    uint32_t ret;
+    ret = read(address);
+    ret |= read(address) << 8;
+    ret |= read(address) << 16;
+    ret |= read(address) << 24;
+    return ret;
+}
 // Intel Inside

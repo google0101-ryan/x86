@@ -603,6 +603,42 @@ void CPU::int_imm8()
         }
         eflags->IF = 1; // Restore interrupt state
     }
+    else if (eflags->IF == 1)
+    {
+        uint32_t entry_addr = idtr.base + (interrupt * 8);
+        if (entry_addr > (idtr.base + idtr.limit))
+        {
+            printf("IDT entry is beyond table limit.\n");
+            exit(1);
+        }
+        uint32_t entry1 = ram->read32(entry_addr);
+        uint32_t entry2 = ram->read32(entry_addr + 4);
+
+        uint8_t cpl = (cs & 3);
+        uint8_t dpl = (entry2 >> 13) & 0x3;
+
+        uint16_t gate_selector = entry1 >> 16;
+        uint8_t gate_dpl = gate_selector & 3;
+        uint32_t gate_offset = 0 | (entry1 & 0xFFFF) | (entry2 & 0xFFFF0000);
+        if (gate_dpl < cpl)
+        {
+            uint16_t cur_ss = ss;
+            uint32_t cur_esp = sp.ei;
+            uint16_t cur_cs = cs;
+            uint32_t cur_eip = eip;
+        }
+        else
+        {
+            uint16_t cur_cs = cs;
+            uint32_t cur_eip = eip;
+            push32(eflags->bits);
+            push32(cur_cs);
+            push32(cur_eip);
+            cs = gate_selector;
+            eip = gate_offset;
+        }
+        eflags->IF = 0;
+    }
 }
 
 void CPU::Dump()
@@ -614,6 +650,7 @@ void CPU::Dump()
     printf("DL: 0x%02x DH: 0x%02x DX: 0x%04x EDX: 0x%04x\n", dx.l, dx.h, dx.hl, dx.reg);
     printf("SI: 0x%02x ESI: 0x%02x\n", si.i, si.ei);
     printf("GDT: limit: 0x%x base 0x%04x\n", gdtr.limit, gdtr.base);
+    printf("IDT: limit: 0x%x base 0x%04x\n", idtr.limit, idtr.base);
     printf("ESP: 0x%x\n", sp.ei);
     printf("EIP: 0x%x\n", eip);
     printf("CR0: 0x%04x (PE: %s)\n", cr0, cr0 & 1 ? "1" : "0");
@@ -630,6 +667,17 @@ void CPU::pusheip()
     for (int i = 0; i < 4; i++)
     {
         ram->write(p_addr + i, eip >> (i * 8));
+    }
+}
+
+void CPU::push32(uint32_t value)
+{
+    uint32_t offset = sp.ei - 4;
+    sp.ei = offset;
+    uint32_t p_addr = physaddr(offset, ss, 1);
+    for (int i = 0; i < 4; i++)
+    {
+        ram->write(p_addr + i, value >> (i * 8));
     }
 }
 
