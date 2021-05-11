@@ -6,6 +6,8 @@
 #include <vector>
 #include <cstring>
 
+#define MP_CONF_TBL_ENT_BASE (0x9FC2C + 44)
+
 int main(int argc, char **argv)
 {
     bool debug = false;
@@ -26,6 +28,18 @@ int main(int argc, char **argv)
     }
     printf("Allocating RAM...\n");
     Memory* ram = new Memory(1024*1024*512); // 1GB of RAM
+    ram->write(0x40E, (0x9FC00 >> 4));
+    ram->write(0x40E + 1, (0x9FC00 >> 4) >> 8);
+    ram->write32(0x9FC00, (uint32_t)0x5f504d5f);
+    ram->write32(0x9FC00 + 4, 0x9FC2C);
+    ram->write32(0x9FC00 + 8, 0x006f0401);
+    ram->write32(0x9FC00 + 12, 0x0);
+    ram->write32(0x9FC2C, (int32_t)0x504d4350);
+    ram->write32(0x9FC2C + 0x4, 0xe9010048);
+    ram->write32(0x9FC2C + 0x24, 0xFEE00000);
+    ram->write32(MP_CONF_TBL_ENT_BASE, 0x0);
+    ram->write32(MP_CONF_TBL_ENT_BASE + 0x14, 0x2);
+    ram->write32(MP_CONF_TBL_ENT_BASE + 0x18, 0xFEC00000);
     printf("Creating CPU...\n");
     // Intel Inside!
     CPU* i386 = new CPU(ram, debug);
