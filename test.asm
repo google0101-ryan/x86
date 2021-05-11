@@ -18,6 +18,7 @@ print:
     cmp al, 0
     je done
 
+    mov ah, 0x0e
     int 0x10
     jmp print
 
@@ -67,7 +68,7 @@ gdt_descriptor:
 CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
 
-msg: db "Jumping to protected mode...", 0
+msg: db "Jumping to protected mode!", 0
 
 times 510 - ($ - $$) db 0
 dw 0xaa55

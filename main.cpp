@@ -9,9 +9,15 @@
 int main(int argc, char **argv)
 {
     bool debug = false;
-    if (argc == 2)
+    if (argc < 2)
     {
-        if (!strcmp(argv[1], "-v"))
+        printf("Usage: ./x86 filename [-v]\n");
+        printf("Options: -v verbose\n");
+        exit(0);
+    }
+    if (argc == 3)
+    {
+        if (!strcmp(argv[2], "-v"))
         {
             debug = true;
             printf("DEBUGGING ON\n");
@@ -23,7 +29,7 @@ int main(int argc, char **argv)
     printf("Creating CPU...\n");
     // Intel Inside!
     CPU* i386 = new CPU(ram, debug);
-    FILE *f = fopen("test", "rb");
+    FILE *f = fopen(argv[1], "rb");
     uint8_t buf[512];
     fseek(f, 0, SEEK_END);
     long size = ftell(f);

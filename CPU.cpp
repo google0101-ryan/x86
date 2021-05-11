@@ -592,8 +592,12 @@ void CPU::int_imm8()
             {
                 printf("%c", ax.l);
             }
+            if (ax.h == 0x00)
+            {
+                system("clear");
+            }
         }
-        eflags->IF = 1;
+        eflags->IF = 1; // Restore interrupt state
     }
 }
 
