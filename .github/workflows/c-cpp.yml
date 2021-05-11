@@ -14,4 +14,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: compile
-      run: g++ *.cpp -o x86
+      run: g++ *.cpp -o x86 -I./ -lpthread
