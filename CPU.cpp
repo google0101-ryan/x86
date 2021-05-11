@@ -594,7 +594,11 @@ void CPU::int_imm8()
             }
             if (ax.h == 0x00)
             {
+                #if defined(__linux__)
                 system("clear");
+                #elif defined(_WIN32) || defined(WIN32)
+                system("CLS");
+                #endif
             }
         }
         eflags->IF = 1; // Restore interrupt state
