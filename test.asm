@@ -1,9 +1,10 @@
 org 0x7c00
 
 start:
+    mov sp, stack
     mov ah, 0x0e
     mov si, [msg]
-    jmp print
+    call print
 cont:
     cli
     lgdt [gdt_descriptor]
@@ -21,7 +22,7 @@ print:
     jmp print
 
 done:
-    jmp cont
+   ret
 
 [bits 32]
 halt:
@@ -70,3 +71,7 @@ msg: db "Jumping to protected mode...", 0
 
 times 510 - ($ - $$) db 0
 dw 0xaa55
+
+section .bss
+stack:
+    resb 4096

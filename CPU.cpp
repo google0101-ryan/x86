@@ -175,7 +175,8 @@ uint8_t CPU::getop(uint8_t opcode)
     if (opcode != 0x04 && opcode != 0xCD && opcode != 0xF0 && 
     opcode != 0xAC && opcode != 0xF4 && opcode != 0x8b && opcode != 0xe9 &&
     opcode != 0x3C && opcode != 0x74 && opcode != 0xeb && opcode != 0x01 &&
-    opcode != 0x83 && opcode != 0xEA)
+    opcode != 0x83 && opcode != 0xEA && opcode != 0x4f && opcode != 0xE8 &&
+    opcode != 0xC3)
     {
         return (opcode & 0xF0);
     } else {
@@ -454,6 +455,24 @@ void CPU::Execute(uint8_t opcode)
             proted = true;
         break;
     }
+    case 0xe8:
+    {
+        uint16_t data = ram->read(physaddr(eip++, cs, 0));
+        data |= ram->read(physaddr(eip++, cs, 0));
+        sp.ei -= 4;
+        pusheip();
+        eip += data;
+        if (debug)
+        printf("CALL 0x%02x\n", eip);
+    }
+    break;
+    case 0xC3:
+    {
+        eip = popeip();
+        if (debug)
+        printf("RET 0x%x\n", eip);
+    }   
+    break;
     default:
         //printf("UNKNOWN OPCODE: 0x%x\n", op);
         break;
@@ -593,4 +612,28 @@ void CPU::Dump()
     printf("CS: 0x%02x DS: 0x%02x ES: 0x%02x\n", cs, ds, es);
     printf("Debug: %d\n", debug);
     printflags();
+}
+
+void CPU::pusheip()
+{
+    uint32_t offset = sp.ei - 4;
+    sp.ei = offset;
+    uint32_t p_addr = physaddr(offset, ss, 1);
+    for (int i = 0; i < 4; i++)
+    {
+        ram->write(p_addr + i, eip >> (i * 8));
+    }
+}
+
+uint32_t CPU::popeip()
+{
+    uint32_t offset = sp.ei;
+    uint32_t p_addr = physaddr(offset, ss, 0);
+    uint32_t value;
+    value = ram->read(p_addr) << (0 * 8);
+    value |= ram->read(p_addr + 1) << (1 * 8);
+    value |= ram->read(p_addr + 2) << (2 * 8);
+    value |= ram->read(p_addr + 3) << (3 * 8);
+    sp.ei = offset + 4;
+    return value;
 }

@@ -67,6 +67,8 @@ public:
     uint8_t getop(uint8_t opcode);
     void SetOverflow(int is_overflow);
     uint32_t getlinearaddr(uint16_t seg, uint32_t offset, uint8_t write, uint8_t exec);
+    void pusheip();
+    uint32_t popeip();
 private:
     Memory *ram;
     regs ax, bx, cx, dx;

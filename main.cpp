@@ -6,8 +6,6 @@
 #include <vector>
 #include <cstring>
 
-#define reserved(num) i386->eflags->reserved##num
-
 int main(int argc, char **argv)
 {
     bool debug = false;
@@ -21,7 +19,7 @@ int main(int argc, char **argv)
         printf("%s\n", argv[1]);
     }
     printf("Allocating RAM...\n");
-    Memory* ram = new Memory(1073741824); // 1GB of RAM
+    Memory* ram = new Memory(1024*1024*512); // 1GB of RAM
     printf("Creating CPU...\n");
     // Intel Inside!
     CPU* i386 = new CPU(ram, debug);
@@ -40,6 +38,9 @@ int main(int argc, char **argv)
     else
     {
         printf("Not a valid bootdisk\n");
+        uint8_t bytes = ram->read(0x7c00 + 510);
+        bytes |= ram->read(0x7c00 + 511) << 8;
+        printf("Last two bytes: 0x%02x", bytes);
     }
     i386->Dump();
 }
