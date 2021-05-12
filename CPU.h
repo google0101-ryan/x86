@@ -103,6 +103,7 @@ public:
     void push32(uint32_t value);
     void check_entry_access(uint8_t access_byte, uint8_t cpl, uint8_t write, uint8_t exec);
     void check_entry_limit(uint32_t entry1, uint32_t entry2, uint32_t offset);
+    uintmax_t cycles;
 private:
     Memory *ram;
     regs ax, bx, cx, dx;

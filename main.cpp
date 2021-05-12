@@ -65,4 +65,7 @@ int main(int argc, char **argv)
         printf("Last two bytes: 0x%02x", bytes);
     }
     i386->Dump();
+    float clock = i386->cycles * 100 / 1000; // Approximate, probably not acurrate. 
+    // Runs in the neighborhood of 18.2 kHz
+    printf("Clock speed (kHz): %.1f\n", clock);
 }

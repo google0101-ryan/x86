@@ -244,6 +244,7 @@ void CPU::Clock()
 {
     uint8_t opcode = ram->read(eip++);
     Execute(opcode);
+    cycles++;
 }
 
 char *makestring(int number);
