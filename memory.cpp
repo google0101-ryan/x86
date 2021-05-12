@@ -1,6 +1,7 @@
 #include "memory.h"
 #include <stdlib.h>
 
+
 Memory::Memory(uint64_t size)
 {
     mem = (uint8_t*)malloc(size);

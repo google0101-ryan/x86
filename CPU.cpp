@@ -16,7 +16,7 @@ uint32_t read_gdt_entry_base(uint32_t entry1, uint32_t entry2)
     return base_low | (base_mid << 16) | (base_high << 24);
 }
 
-void check_entry_access(uint8_t access_byte, uint8_t cpl, uint8_t write, uint8_t exec)
+void CPU::check_entry_access(uint8_t access_byte, uint8_t cpl, uint8_t write, uint8_t exec)
 {
     if (write)
     {
@@ -24,6 +24,7 @@ void check_entry_access(uint8_t access_byte, uint8_t cpl, uint8_t write, uint8_t
         if (!rw)
         {
             printf("GDT ACCESS ERROR: not writable\n");
+            Dump();
             exit(1);
         }
     }
@@ -33,6 +34,7 @@ void check_entry_access(uint8_t access_byte, uint8_t cpl, uint8_t write, uint8_t
         if (!d_exec)
         {
             printf("GDT ACCESS ERROR: not executable\n");
+            Dump();
             exit(1);
         }
     }
@@ -40,11 +42,12 @@ void check_entry_access(uint8_t access_byte, uint8_t cpl, uint8_t write, uint8_t
     if (dpl < cpl)
     {
         printf("GDT ACCESS ERROR: entry privelege not met\n");
+        Dump();
         exit(1);
     }
 }
 
-void check_entry_limit(uint32_t entry1, uint32_t entry2, uint32_t offset)
+void CPU::check_entry_limit(uint32_t entry1, uint32_t entry2, uint32_t offset)
 {
     uint32_t limit_low = entry1 & 0xFFFF;
     uint32_t limit_high = (entry2 >> 16) & 0xF;
@@ -58,6 +61,7 @@ void check_entry_limit(uint32_t entry1, uint32_t entry2, uint32_t offset)
         if ((uint64_t)offset > limit_val)
         {
             printf("GDT ACCESS ERROR: beyond entry limit\n");
+            Dump();
             exit(1);
         }
     }
@@ -66,6 +70,7 @@ void check_entry_limit(uint32_t entry1, uint32_t entry2, uint32_t offset)
         if (offset > limit)
         {
             printf("GDT ACCESS ERROR: beyond entry limit\n");
+            Dump();
             exit(1);
         }
     }
@@ -86,6 +91,7 @@ uint32_t CPU::getlinearaddr(uint16_t seg, uint32_t offset, uint8_t write, uint8_
         if (entry_addr > (gdtr.base + gdtr.limit + 1))
         {
             printf("GDT ACCESS ERROR: beyond table limit\n");
+            Dump();
             exit(1);
         }
         uint32_t entry1 = ram->read(entry_addr++);
@@ -176,7 +182,7 @@ uint8_t CPU::getop(uint8_t opcode)
     opcode != 0xAC && opcode != 0xF4 && opcode != 0x8b && opcode != 0xe9 &&
     opcode != 0x3C && opcode != 0x74 && opcode != 0xeb && opcode != 0x01 &&
     opcode != 0x83 && opcode != 0xEA && opcode != 0x4f && opcode != 0xE8 &&
-    opcode != 0xC3)
+    opcode != 0xC3 && opcode != 0xFB && opcode != 0xF)
     {
         return (opcode & 0xF0);
     } else {
@@ -240,6 +246,22 @@ void CPU::Clock()
     Execute(opcode);
 }
 
+char *makestring(int number);
+
+int hex_to_int(char c){
+        int first = c / 16 - 3;
+        int second = c % 16;
+        int result = first*10 + second;
+        if(result > 9) result--;
+        return result;
+}
+
+int hex_to_ascii(char c, char d){
+        int high = hex_to_int(c) * 16;
+        int low = hex_to_int(d);
+        return high+low;
+}
+
 void CPU::Execute(uint8_t opcode)
 {
     uint8_t op = getop(opcode);
@@ -287,7 +309,7 @@ void CPU::Execute(uint8_t opcode)
             mov_r16_imm(opcode);
         }
     } else {
-        if (opcode < 0xB8 && prefix != 0x66)
+        if (opcode <= 0xB8 && prefix != 0x66)
         {
             mov_r8_imm(opcode);
         } else if (prefix == 0x66) {
@@ -304,6 +326,11 @@ void CPU::Execute(uint8_t opcode)
         eflags->IF = 0;
         if (debug)
         printf("CLI\n");
+        break;
+    case 0xFB:
+        eflags->IF = 1;
+        if (debug)
+        printf("STI\n");
         break;
     case 0xAC: // LODSB
         ax.l = ram->read(si.i);
@@ -351,6 +378,37 @@ void CPU::Execute(uint8_t opcode)
         if (debug)
         printf("CMP AL, 0x%x\n", data);
         break;
+    }
+    case 0xA2:
+    {
+        if (debug)
+        printf("CPUID\n");
+        if (ax.reg == 0)
+        {
+            char vendor_id[13] = "GenuineIntel";
+            ax.reg = X64CPU_CPUID_INTELBRANDSTRINGEND;
+            bx.reg = 0;
+            cx.reg = 0;
+            dx.reg = 0;
+            memcpy(&bx.reg, &vendor_id[0], 4);
+            memcpy(&dx.reg, &vendor_id[4], 4);
+            memcpy(&cx.reg, &vendor_id[8], 4);
+            break;
+        }
+        if (ax.reg == 1)
+        {
+            cpuinfo *info = (cpuinfo*)malloc(sizeof(cpuinfo));
+            info->exFamily = 0;
+            info->familyid = 5;
+            info->exModel = 0x0;
+            info->model = 0x1;
+            info->type = 0;
+            info->stepid = 0;
+            ax.reg = info->bits;
+            free((void*)info);
+            dx.reg = 0;
+            break;
+        }
     }
     case 0x74:
     {
@@ -474,7 +532,9 @@ void CPU::Execute(uint8_t opcode)
     }   
     break;
     default:
+    {
         //printf("UNKNOWN OPCODE: 0x%x\n", op);
+    }
         break;
     }
 }
@@ -505,6 +565,8 @@ void CPU::mov_r8_imm(uint8_t opcode)
 void CPU::mov_r16_imm(uint8_t opcode)
 {
     uint8_t reg = opcode - 0xB8;
+    if (debug)
+    printf("Reg 0x%0x\n", reg);
     switch(reg)
     {
     case 0x0:
@@ -555,7 +617,11 @@ void CPU::mov_r16_imm(uint8_t opcode)
 
 void CPU::mov_r32_imm(uint8_t opcode)
 {
-    uint8_t reg = opcode - 0xB0;
+    uint8_t reg;
+    if (proted)
+        reg = opcode - 0xB8;
+    else
+        reg = opcode - 0xB0;
     //printf("MOV CODE 0x%x\n", opcode);
     uint32_t data;
     data = ram->read(physaddr(eip++, cs, 0));
@@ -568,10 +634,10 @@ void CPU::mov_r32_imm(uint8_t opcode)
     case 0x0:
         ax.reg = data;
         if (debug)
-        printf("MOV AX, 0x%02x", data);
+        printf("MOV EAX, 0x%02x", data);
         break;
     default:
-        //printf("UNKNOWN REGCODE 0x%x\n", reg);
+        printf("UNKNOWN REGCODE 0x%x\n", reg);
         break;
     }
 }
@@ -582,33 +648,36 @@ void CPU::int_imm8()
     uint8_t interrupt = ram->read(eip++);
     if (debug)
     printf("INT 0x%x\n", interrupt);
-    if (!proted && eflags->IF == 1)
+    if (!proted)
     {
-        eflags->IF = 0; // Make other interrupts wait
-        switch (interrupt)
-        {
-        case 0x10:
-            if (ax.h == 0x0e)
+        if (eflags->IF == 1) {
+            eflags->IF = 0; // Make other interrupts wait
+            switch (interrupt)
             {
-                printf("%c", ax.l);
+            case 0x10:
+                if (ax.h == 0x0e)
+                {
+                    printf("%c", ax.l);
+                }
+                if (ax.h == 0x00)
+                {
+                    #if defined(__linux__)
+                    system("clear");
+                    #elif defined(_WIN32) || defined(WIN32)
+                    system("CLS");
+                    #endif
+                }
             }
-            if (ax.h == 0x00)
-            {
-                #if defined(__linux__)
-                system("clear");
-                #elif defined(_WIN32) || defined(WIN32)
-                system("CLS");
-                #endif
-            }
+            eflags->IF = 1; // Restore interrupt state
         }
-        eflags->IF = 1; // Restore interrupt state
     }
-    else if (eflags->IF == 1)
+    else if (proted && eflags->IF == 1)
     {
         uint32_t entry_addr = idtr.base + (interrupt * 8);
         if (entry_addr > (idtr.base + idtr.limit))
         {
-            printf("IDT entry is beyond table limit.\n");
+            printf("\nIDT entry is beyond table limit.\n");
+            Dump();
             exit(1);
         }
         uint32_t entry1 = ram->read32(entry_addr);
@@ -692,4 +761,30 @@ uint32_t CPU::popeip()
     value |= ram->read(p_addr + 3) << (3 * 8);
     sp.ei = offset + 4;
     return value;
+}
+
+char makedigit(int *number, int base)
+{
+    static char map[] = "0123456789";
+    int ix;
+
+    for (ix = 0; *number >= base; ix++)
+    {
+        *number -= base;
+    }
+
+    return map[ix];
+}
+
+char *makestring (int number)
+{
+  static char tmp[5];
+
+  tmp[0] = makedigit(&number, 1000);
+  tmp[1] = makedigit(&number, 100);
+  tmp[2] = makedigit(&number, 10);
+  tmp[3] = makedigit(&number, 1);
+  tmp[4] = '\0';
+
+  return tmp;
 }

@@ -50,6 +50,30 @@ typedef struct
     uint32_t base; 
 } dtr;
 
+enum
+{
+    X64CPU_CPUID_INTELEXTENDED      = 0x80000000,
+    X64CPU_CPUID_INTELFEATURES,
+    X64CPU_CPUID_INTELBRANDSTRING,
+    X64CPU_CPUID_INTELBRANDSTRINGMORE,
+    X64CPU_CPUID_INTELBRANDSTRINGEND,
+};
+
+union cpuinfo
+{
+    struct
+    {
+        uint8_t stepid: 4,
+        model: 4,
+        familyid: 4,
+        type: 2,
+        reserved: 2,
+        exModel: 4,
+        exFamily: 8,
+        reserved2: 4;
+    };
+    uint32_t bits;
+};
 
 class CPU
 {
@@ -77,6 +101,8 @@ public:
     flags *eflags;
     uint8_t int_r;
     void push32(uint32_t value);
+    void check_entry_access(uint8_t access_byte, uint8_t cpl, uint8_t write, uint8_t exec);
+    void check_entry_limit(uint32_t entry1, uint32_t entry2, uint32_t offset);
 private:
     Memory *ram;
     regs ax, bx, cx, dx;
