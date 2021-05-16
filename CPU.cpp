@@ -612,6 +612,17 @@ void CPU::mov_r16_imm(uint8_t opcode)
             printf("MOV SI, 0x%02x\n", data);
     }
         break;
+    case 0xf8:
+    {
+        uint32_t data;
+        data = ram->read(physaddr(eip++, cs, 0));
+        data |= ram->read(physaddr(eip++, cs, 0)) << 8;
+        data |= ram->read(physaddr(eip++, cs, 0)) << 16;
+        data |= ram->read(physaddr(eip++, cs, 0)) << 24;
+        ax.reg = data;
+        if (debug)
+            printf("MOV EAX, 0x%04x\n", data);
+    }
     }
     
 }
