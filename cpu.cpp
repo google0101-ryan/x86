@@ -21,6 +21,11 @@ void do_rm16_imm8(Pentium* cpu)
     uint16_t imm = static_cast<uint16_t>(cpu->bus->read16(cpu->getLinearAddr()));
     cpu->ip.regs_32 += 2;
     printf("ModRM  Mod 0x%x Reg 0x%x Mem 0x%x", cpu->modrm->mod, cpu->modrm->reg, cpu->modrm->rm);
+    switch(cpu->modrm->reg)
+    {
+    case 0x7:
+        cmp(val, imm, cpu);
+    }
 }
 
 uint32_t Pentium::modrm_to_address(uint8_t mod, uint8_t rm)
@@ -192,14 +197,14 @@ template uint16_t sub(uint16_t, uint16_t, Pentium*);
 template uint32_t sub(uint32_t, uint32_t, Pentium*);
 
 template <typename T>
-void cmp(T a, T b)
+void cmp(T a, T b, Pentium* cpu)
 {
-    sub(a, b);
+    sub(a, b, cpu);
 }
 
-template void cmp(uint8_t, uint8_t);
-template void cmp(uint16_t, uint16_t);
-template void cmp(uint32_t, uint32_t);
+template void cmp(uint8_t, uint8_t, Pentium*);
+template void cmp(uint16_t, uint16_t, Pentium*);
+template void cmp(uint32_t, uint32_t, Pentium*);
 
 uint16_t Pentium::read_modrm_rm16()
 {
