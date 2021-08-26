@@ -2,6 +2,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+template <typename T>
+T sub(T a, T b, Pentium* cpu)
+{
+    uint32_t result = a - b;
+    cpu->eflags_dirty = eflags_all;
+    cpu->last_add_result = a;
+    cpu->last_op1 = cpu->last_result = result;
+    cpu->last_op2 = b;
+    cpu->last_size = sizeof(T) * 8 - 1;
+    return result;
+}
+
+template uint8_t sub(uint8_t, uint8_t, Pentium*);
+template uint16_t sub(uint16_t, uint16_t, Pentium*);
+template uint32_t sub(uint32_t, uint32_t, Pentium*);
+
+template <typename T>
+void cmp(T a, T b, Pentium* cpu)
+{
+    sub(a, b, cpu);
+    printf("CMP\n");
+}
+
+template void cmp(uint8_t, uint8_t, Pentium*);
+template void cmp(uint16_t, uint16_t, Pentium*);
+template void cmp(uint32_t, uint32_t, Pentium*);
+
 void jmpf_ptr16(Pentium* cpu)
 {
     uint16_t ip = cpu->bus->read16(cpu->getLinearAddr());
@@ -179,32 +206,6 @@ uint32_t Pentium::modrm_to_address(uint8_t mod, uint8_t rm)
     }
     return 0;
 }
-
-template <typename T>
-T sub(T a, T b, Pentium* cpu)
-{
-    uint32_t result = a - b;
-    cpu->eflags_dirty = eflags_all;
-    cpu->last_add_result = a;
-    cpu->last_op1 = cpu->last_result = result;
-    cpu->last_op2 = b;
-    cpu->last_size = sizeof(T) * 8 - 1;
-    return result;
-}
-
-template uint8_t sub(uint8_t, uint8_t, Pentium*);
-template uint16_t sub(uint16_t, uint16_t, Pentium*);
-template uint32_t sub(uint32_t, uint32_t, Pentium*);
-
-template <typename T>
-void cmp(T a, T b, Pentium* cpu)
-{
-    sub(a, b, cpu);
-}
-
-template void cmp(uint8_t, uint8_t, Pentium*);
-template void cmp(uint16_t, uint16_t, Pentium*);
-template void cmp(uint32_t, uint32_t, Pentium*);
 
 uint16_t Pentium::read_modrm_rm16()
 {
