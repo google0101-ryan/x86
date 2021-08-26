@@ -22,7 +22,7 @@ template <typename T>
 void cmp(T a, T b, Pentium* cpu)
 {
     sub(a, b, cpu);
-    printf("CMP\n");
+    printf("CMP 0x%x 0x%x\n", a, b);
 }
 
 template void cmp(uint8_t, uint8_t, Pentium*);
@@ -47,7 +47,7 @@ void do_rm16_imm8(Pentium* cpu)
     uint16_t val = cpu->read_modrm_rm16();
     uint16_t imm = static_cast<uint16_t>(cpu->bus->read16(cpu->getLinearAddr()));
     cpu->ip.regs_32 += 2;
-    printf("ModRM  Mod 0x%x Reg 0x%x Mem 0x%x", cpu->modrm->mod, cpu->modrm->reg, cpu->modrm->rm);
+    printf("ModRM  Mod 0x%x Reg 0x%x Mem 0x%x\n", cpu->modrm->mod, cpu->modrm->reg, cpu->modrm->rm);
     switch(cpu->modrm->reg)
     {
     case 0x7:
@@ -220,6 +220,13 @@ uint16_t Pentium::read_modrm_rm16()
     }
 }
 
+void two_byte_instr(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    uint8_t opcode = cpu->bus->read(cpu->getLinearAddr());
+    printf("0x%x\n", opcode);
+}
+
 void Pentium::reset()
 {
     for (size_t i = 0; i < num_gpregs; i++) {
@@ -241,6 +248,7 @@ void Pentium::reset()
     }
     instrs[0xEA] = jmpf_ptr16;
     instrs[0x83] = do_rm16_imm8;
+    instrs[0x0F] = two_byte_instr;
 }
 
 uint32_t Pentium::seg_to_linear(SGRegister reg, uint32_t offset)
