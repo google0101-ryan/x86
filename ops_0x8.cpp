@@ -19,6 +19,7 @@ void mov_rm32_r32(Pentium* cpu)
     parse_modrm(&modrm, cpu);
     uint32_t r32 = cpu->gpregs[modrm.reg_index].regs_32;
     set_rm32(cpu, &modrm, r32);
+    //cpu->ip.regs_32+=2;
 }
 
 void or_rm32_imm32(Pentium* cpu, ModRM* modrm)
@@ -28,6 +29,16 @@ void or_rm32_imm32(Pentium* cpu, ModRM* modrm)
     cpu->ip.regs_32 += 4;
 
     uint32_t result = rm32 | imm32;
+    set_rm32(cpu, modrm, result);
+}
+
+void and_rm32_imm32(Pentium* cpu, ModRM* modrm)
+{
+    uint32_t rm32 = get_rm32(cpu, modrm);
+    uint32_t imm32 = cpu->bus->read32(cpu->getLinearAddr());
+    cpu->ip.regs_32 += 4;
+
+    uint32_t result = rm32 & imm32;
     set_rm32(cpu, modrm, result);
 }
 
@@ -41,6 +52,9 @@ void code_81(Pentium* cpu)
     {
     case 1:
         or_rm32_imm32(cpu, &modrm);
+        break;
+    case 4:
+        and_rm32_imm32(cpu, &modrm);
         break;
     default:
         printf("Not implemented: Op: 81 with ModR/M Op: %d\n", modrm.opcode);
@@ -59,6 +73,16 @@ void cmp_rm32_imm8(Pentium* cpu, ModRM *modrm)
     printf("CMP 0x%x, 0x%x\n", rm32, imm8);
 }
 
+void or_rm32_imm8(Pentium* cpu, ModRM* modrm)
+{
+    uint32_t rm32 = get_rm32(cpu, modrm);
+    uint32_t imm8 = (int32_t)cpu->bus->read(cpu->getLinearAddr());
+    cpu->ip.regs_32++;
+
+    uint32_t result = rm32 | imm8;
+    set_rm32(cpu, modrm, result);
+}
+
 void code_83(Pentium* cpu)
 {
     cpu->ip.regs_32++;
@@ -68,6 +92,9 @@ void code_83(Pentium* cpu)
 
     switch (modrm.opcode)   
     {
+    case 1:
+        or_rm32_imm8(cpu, &modrm);
+        break;
     case 7:
         cmp_rm32_imm8(cpu, &modrm);
         break;

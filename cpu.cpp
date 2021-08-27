@@ -115,8 +115,13 @@ void Pentium::reset()
     instrs[0x8E] = mov_seg_rm32;
     instrs[0x81] = code_81;
     instrs[0x89] = mov_rm32_r32;
+    for (int i = 0; i < 8; i++)
+    {
+        instrs[0xB8 + i] = mov_r32_imm32;
+    }
     two_byte_instrs[0x01] = code_0f_01;
     two_byte_instrs[0x20] = mov_r32_cr;
+    two_byte_instrs[0x22] = mov_cr_r32;
     two_byte_instrs[0x85] = jnz32;
 }
 
@@ -157,6 +162,8 @@ void Pentium::clock()
     uint8_t opcode;
     printf("0x%x\n", getLinearAddr());
     opcode = bus->read(getLinearAddr());
+    printf("0x%x\n", opcode);
+    
     if (opcode == 0x2E)
     {
         ip.regs_32++;

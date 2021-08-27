@@ -13,4 +13,5 @@ void or_al_imm8(Pentium* cpu);
 void code_0f_01(Pentium* cpu);
 void mov_r32_cr(Pentium* cpu);
 void code_81(Pentium* cpu);
+void mov_cr_r32(Pentium* cpu);
 void ptr_jump(Pentium*);

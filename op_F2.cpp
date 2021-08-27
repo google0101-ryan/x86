@@ -21,4 +21,6 @@ void mov_cr_r32(Pentium* cpu)
     parse_modrm(&modrm, cpu);
     uint32_t r32_val = cpu->gpregs[modrm.rm].regs_32;
     cpu->cr[modrm.rm] = r32_val;
+    cpu->ip.regs_32++;
+    printf("Mov cr%d, r32\n", modrm.rm);
 }
