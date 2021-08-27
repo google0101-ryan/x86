@@ -4,6 +4,8 @@
 Board::Board()
 {
     bus = new Bus();
+    iobus = new IOBus();
+    cmos = new CMOS(iobus);
     std::ifstream bios;
     bios.open("fw/bios.bin");
     bios.seekg(0, std::ios::end);
@@ -22,7 +24,7 @@ Board::Board()
     printf("BIOS loaded to 0x%x and 0x%x\n", -invert, 0x100000 - fileSize);
     delete[] buffer;
     ram = new RAM(bus); // We need to do this last, or it'll override the other MMIO devices. 
-    cpu = new Pentium(bus);
+    cpu = new Pentium(bus, iobus);
 }
 
 void Board::Clock()

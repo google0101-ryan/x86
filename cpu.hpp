@@ -1,5 +1,10 @@
+#pragma once
+
 #include "bus.hpp"
+#include "IOBus.hpp"
 #include <stddef.h>
+
+class Pentium;
 
 union Register {
     uint32_t regs_32;
@@ -18,19 +23,12 @@ struct Segment {
 constexpr size_t num_gpregs = 8;
 constexpr size_t num_sgregs = 6;
 
-constexpr size_t operand_size_8 = 7;
-constexpr size_t operand_size_16 = 15;
-constexpr size_t operand_size_32 = 31;
-constexpr uint32_t eflags_cf = (1 << 0);
-constexpr uint32_t eflags_pf = (1 << 2);
-constexpr uint32_t eflags_af = (1 << 4);
-constexpr uint32_t eflags_zf = (1 << 6);
-constexpr uint32_t eflags_sf = (1 << 7);
-constexpr uint32_t eflags_if = (1 << 9);
-constexpr uint32_t eflags_df = (1 << 10);
-constexpr uint32_t eflags_of = (1 << 11);
-constexpr uint32_t eflags_all =
-    (eflags_cf | eflags_pf | eflags_af | eflags_zf | eflags_sf | eflags_of);
+#define CARRY_FLAG (1)
+#define ZERO_FLAG (1 << 6)
+#define SIGN_FLAG (1 << 7)
+#define INT_ENABLE_FLAG (1 << 9)
+#define DIRECTION_FLAG (1 << 10)
+#define OVERFLOW_FLAG (1 << 11)
 
 enum class GPRegister8 : uint8_t {
     AL = 0,
@@ -108,29 +106,20 @@ struct GDTEntry {
     uint8_t base_high;
 } __attribute__((packed));
 
-typedef struct
-{
-    uint8_t seg, size_override;
-} prefix_t;
-
-struct ModRM {
-    uint8_t rm : 3;
-    uint8_t reg : 3;
-    uint8_t mod : 2;
-} __attribute__((packed));
-
 class Pentium
 {
 public:
-    prefix_t prefix;
 
     typedef void (instr_t)(Pentium*);
 
     instr_t *instrs[256];
+    instr_t *two_byte_instrs[256];
     
     Register gpregs[num_gpregs];
 
     Segment sgregs[num_sgregs];
+
+    uint32_t cr[8];
 
     Register ip;
 
@@ -140,18 +129,19 @@ public:
 
     bool isPE = false;
     bool firstClock = true;
-    uint32_t eflags, eflags_dirty, last_op1, last_op2, last_result, last_add_result, last_size;
-    uint8_t raw_modrm;
-    ModRM* modrm;
+    uint32_t eflags;
     uint32_t decoded_addr;
     uint16_t read_modrm_rm16();
     uint32_t modrm_to_address(uint8_t mod, uint8_t rm);
     uint32_t seg_to_linear(SGRegister reg, uint32_t offset);
+    uint32_t pop32();
 public:
     CPUState state;
     Bus* bus; // We expose the bus for instructions
-    Pentium(Bus* bus) : bus(bus) {modrm = (ModRM*)&raw_modrm; reset();}
+    IOBus* iobus;
+    Pentium(Bus* bus, IOBus* iobus) : bus(bus), iobus(iobus) {reset();}
     uint32_t getLinearAddr();
+    void update_eflags_sub(uint32_t op1, uint32_t op2, uint64_t result);
     void reset();
     void clock();
     void write_sgreg(SGRegister seg, uint32_t value);

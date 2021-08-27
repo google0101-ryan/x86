@@ -36,3 +36,26 @@ uint16_t Bus::read16(uint32_t addr)
 {
     return ((read(addr)) | read(addr + 1) << 8);
 }
+
+uint32_t Bus::read32(uint32_t addr)
+{
+    return ((read16(addr)) | read16(addr + 2) << 16);
+}
+
+void Bus::write16(uint32_t addr, uint16_t data)
+{
+    int i;
+    for (i = 0; i < 2; i++)
+    {
+        write(addr + i, data >> (i * 8));
+    }
+}
+
+void Bus::write32(uint32_t addr, uint32_t data)
+{
+    int i;
+    for (i = 0; i < 4; i++)
+    {
+        write(addr + i, data >> (i * 8));
+    }
+}

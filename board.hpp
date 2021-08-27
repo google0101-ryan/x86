@@ -4,11 +4,15 @@
 #include "ram.hpp"
 #include "rom.hpp"
 #include "cpu.hpp"
+#include "IOBus.hpp"
+#include "CMOS.hpp"
 
 class Board
 {
 private:
     Bus* bus;
+    CMOS* cmos;
+    IOBus* iobus;
     RAM* ram;
     ROM* rom1, *rom2;
     Pentium* cpu;
