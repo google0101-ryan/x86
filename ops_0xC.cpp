@@ -63,3 +63,25 @@ void code_c1(Pentium* cpu)
         exit(-1);
     }
 }
+
+void ret(Pentium* cpu)
+{
+    cpu->ip.regs_32 = cpu->pop32();
+}
+
+void load_seg_r32(Pentium* cpu, int seg_index, ModRM* modrm)
+{
+    uint32_t address = calc_memory_address(cpu, modrm);
+    uint16_t seg_val = cpu->bus->read16(cpu->seg_to_linear(SGRegister::DS, address));
+    uint32_t offset = cpu->bus->read32(cpu->seg_to_linear(SGRegister::DS, address + 2));
+    cpu->sgregs[seg_index].base = seg_val;
+    cpu->gpregs[modrm->reg_index].regs_32 = offset;
+}
+
+void les(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+    load_seg_r32(cpu, (int)SGRegister::ES, &modrm);
+}

@@ -1,11 +1,35 @@
 #include "modrm.hpp"
 #include "cpu.hpp"
+#include <stdio.h>
 
 void out_imm8_al(Pentium* cpu)
 {
     uint16_t address = cpu->bus->read(cpu->getLinearAddr() + 1);
     uint8_t al_val = cpu->gpregs[(int)GPRegister8::AL].regs_8l;
     cpu->iobus->out8(address, al_val);
+    cpu->ip.regs_32 += 2;
+    printf("OUT 0x%x, AL\n", address);
+}
+
+void jecxz(Pentium* cpu)
+{
+    uint32_t ecx_val = cpu->gpregs[(int)GPRegister32::ECX].regs_32;
+    if (ecx_val == 0)
+    {
+        int8_t offset = cpu->bus->read(cpu->getLinearAddr() + 1);
+        cpu->ip.regs_32 += (offset + 2);
+    }
+    else
+    {
+        cpu->ip.regs_32 += 2;
+    }
+}
+
+void in_al_imm8(Pentium* cpu)
+{
+    uint16_t address = cpu->bus->read(cpu->getLinearAddr() + 1);
+    uint8_t value = cpu->iobus->in8(address);
+    cpu->gpregs[(int)GPRegister8::AL].regs_8l;
     cpu->ip.regs_32 += 2;
 }
 

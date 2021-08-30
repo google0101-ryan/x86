@@ -41,3 +41,31 @@ void cmp_rm32_r32(Pentium* cpu)
         cpu->eflags &= ~ZERO_FLAG;
     }
 }
+
+void cmp_al_imm8(Pentium* cpu)
+{
+    uint8_t value = cpu->bus->read(cpu->getLinearAddr() + 1);
+    uint8_t al = cpu->gpregs[(int)GPRegister8::AL].regs_8l;
+    uint16_t result = (uint16_t)al - (uint16_t)value;
+    int sign1 = al >> 7;
+    int sing2 = result >> 7;
+    int signr = (result >> 7) & 1;
+
+    if (result >> 8)
+    {
+        cpu->eflags |= CARRY_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~CARRY_FLAG;
+    }
+    if (result == 0)
+    {
+        cpu->eflags |= ZERO_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~ZERO_FLAG;
+    }
+    cpu->ip.regs_32 += 2;
+}

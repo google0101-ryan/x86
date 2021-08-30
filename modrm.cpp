@@ -192,3 +192,16 @@ void set_rm32(Pentium *cpu, ModRM* modrm, uint32_t value)
         cpu->bus->write32(cpu->seg_to_linear(SGRegister::DS, address), value);
     }
 }
+
+void set_rm8(Pentium *cpu, ModRM* modrm, uint32_t value)
+{
+    if (modrm->mod == 3)
+    {
+        cpu->gpregs[modrm->rm].regs_8h = value;
+    }
+    else
+    {
+        uint32_t address = calc_memory_address(cpu, modrm);
+        cpu->bus->write(cpu->seg_to_linear(SGRegister::DS, address), value);
+    }
+}

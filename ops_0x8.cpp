@@ -163,6 +163,16 @@ void code_83(Pentium* cpu)
     }
 }
 
+void mov_rm8_r8(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+
+    uint32_t r8 = cpu->gpregs[modrm.reg_index].regs_8h;
+    set_rm8(cpu, &modrm, r8);
+}
+
 /*
  * mov rm32 r32: 2 bytes
  * Copies value of register specified by reg to ModR/M
