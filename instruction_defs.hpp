@@ -5,6 +5,9 @@ void push_es(Pentium* cpu);
 void pop_es(Pentium* cpu);
 void les(Pentium* cpu);
 
+/*0x10*/
+void pop_ds(Pentium* cpu);
+
 /*0x20*/
 void and_rm32_r32(Pentium* cpu);
 

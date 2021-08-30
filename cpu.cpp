@@ -122,6 +122,7 @@ static void rep(Pentium* cpu)
         printf("Op: f3 %x not implemented.\n", op);
         exit(-1);
     }
+    printf("REP 0x%x (0x%x times)\n", op, ecx_val);
     for (i = 0; i < ecx_val; i++)
     {
         cpu->ip.regs_32 = op_eip;
@@ -157,6 +158,7 @@ void Pentium::reset()
     instrs[0x06] = push_es;
     instrs[0x07] = pop_es;
     instrs[0x0F] = two_byte_inst;
+    instrs[0x1F] = pop_ds;
     instrs[0x21] = and_rm32_r32;
     instrs[0x31] = xor_rm32_r32;
     instrs[0x3C] = cmp_al_imm8;
