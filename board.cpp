@@ -6,6 +6,7 @@ Board::Board()
     bus = new Bus();
     iobus = new IOBus();
     cmos = new CMOS(iobus);
+    DMA::create(iobus);
     std::ifstream bios;
     bios.open("fw/bios.bin");
     bios.seekg(0, std::ios::end);

@@ -1,11 +1,11 @@
 #include "CMOS.hpp"
 
-void cmos_writeb(uint8_t data)
+void cmos_writeb(uint16_t port, uint8_t data)
 {
     ((void)data); // Do nothing for now
 }
 
-uint8_t cmos_readb()
+uint8_t cmos_readb(uint16_t port)
 {
     return 0;
 }

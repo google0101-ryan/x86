@@ -32,6 +32,7 @@ void parse_modrm(ModRM* modrm, Pentium* cpu)
         {
             modrm->disp16 = cpu->bus->read16(cpu->getLinearAddr());
             cpu->ip.regs_32 += 2;
+            printf("MODR/M with mod 0x%x, opcode 0x%x, disp16 0x%x, and rm 0x%x\n", modrm->mod, modrm->opcode, modrm->disp16, modrm->rm);
             return;
         }
     }
@@ -55,6 +56,7 @@ void parse_modrm(ModRM* modrm, Pentium* cpu)
         modrm->disp8 = cpu->bus->read(cpu->getLinearAddr());
         cpu->ip.regs_32++;
     }
+    printf("MODR/M with mod 0x%x, opcode 0x%x, disp16 0x%x, and rm 0x%x\n", modrm->mod, modrm->opcode, modrm->disp16, modrm->rm);
 }
 
 uint32_t calc_cib_address(Pentium* cpu, ModRM* modrm)
@@ -98,6 +100,7 @@ uint32_t calc_memory_address(Pentium* cpu, ModRM* modrm)
     {
         if (modrm->mod == 0 && modrm->rm == 6)
         {
+            printf("Return disp16 0x%x\n", modrm->disp16);
             return modrm->disp16;
         }
     }
@@ -161,6 +164,19 @@ uint32_t get_rm32(Pentium* cpu, ModRM* modrm)
     {
         uint32_t address = calc_memory_address(cpu, modrm);
         return cpu->bus->read32(cpu->seg_to_linear(SGRegister::DS, address));
+    }
+}
+
+uint32_t get_rm8(Pentium* cpu, ModRM* modrm)
+{
+    if (modrm->mod == 3)
+    {
+        return cpu->gpregs[modrm->rm].regs_8h;
+    }
+    else
+    {
+        uint32_t address = calc_memory_address(cpu, modrm);
+        return cpu->bus->read(cpu->seg_to_linear(SGRegister::DS, address));
     }
 }
 

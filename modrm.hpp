@@ -35,3 +35,5 @@ uint32_t calc_memory_address(Pentium* cpu, ModRM* modrm);
 
 uint32_t get_rm32(Pentium* cpu, ModRM* modrm);
 void set_rm32(Pentium *cpu, ModRM* modrm, uint32_t value);
+
+uint32_t get_rm8(Pentium* cpu, ModRM* modrm);

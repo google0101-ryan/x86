@@ -9,7 +9,7 @@ void IOBus::out8(uint32_t port, uint8_t data)
         printf("WARNING: Ignored IO write to 0x%x\n", port);
         return;
     }
-    out8_handlers[port](data);
+    out8_handlers[port](port, data);
 }
 
 uint8_t IOBus::in8(uint16_t port)
@@ -19,7 +19,7 @@ uint8_t IOBus::in8(uint16_t port)
         printf("WARNING: Ignored IO read from 0x%x\n", port);
         return 0;
     }
-    return in8_handlers[port]();
+    return in8_handlers[port](port);
 }
 
 void IOBus::register_io_in8(uint16_t port, io_in8_t handler)

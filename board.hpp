@@ -6,6 +6,7 @@
 #include "cpu.hpp"
 #include "IOBus.hpp"
 #include "CMOS.hpp"
+#include "DMA.hpp"
 
 class Board
 {

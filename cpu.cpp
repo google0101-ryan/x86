@@ -1,5 +1,5 @@
-#include "instruction_defs.hpp"
 #include "cpu.hpp"
+#include "instruction_defs.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -46,25 +46,22 @@ void Pentium::update_eflags_sub(uint32_t op1, uint32_t op2, uint64_t result)
 uint32_t Pentium::pop32()
 {
     uint32_t addr = seg_to_linear(SGRegister::DS, gpregs[(int)GPRegister32::ESP].regs_32);
+    gpregs[(int)GPRegister32::ESP].regs_32 += 4;
     return bus->read32(addr);
 }
 
-void two_byte_instruction(Pentium* cpu)
+void Pentium::push32(uint32_t value)
 {
-    uint8_t opcode = cpu->bus->read(cpu->getLinearAddr() + 1);
-    if (cpu->two_byte_instrs[opcode] == NULL)
-    {
-        printf("EIP: %08x Op: 0f %x not implemented.\n", cpu->ip.regs_32, opcode);
-        exit(-1);
-    }
-    cpu->two_byte_instrs[opcode](cpu);
+    uint32_t addr = seg_to_linear(SGRegister::DS, gpregs[(int)GPRegister32::ESP].regs_32);
+    gpregs[(int)GPRegister32::ESP].regs_32 -= 4;
+    bus->write32(addr, value);
 }
 
 void operand_override(Pentium* cpu)
 {
     cpu->ip.regs_32++;
     uint8_t op = cpu->bus->read(cpu->getLinearAddr());
-    printf("Opcode 0x66 0x%x\n", op);
+    printf("0x%x\n", op);
     if (cpu->isPE)
     {
 
@@ -73,15 +70,44 @@ void operand_override(Pentium* cpu)
     {
         if (op >= 0xB8 && op <= 0xBF)
         {
-            mov_r32_imm32(cpu);
+            mov_rm32_imm32(cpu);
             return;
         }
-    switch (op)
+        if (op >= 0x50 && op <= 0x57)
+        {
+            push_r32(cpu);
+            return;
+        }
+        switch (op)
+        {
+        case 0x83:
+            code_83(cpu);
+            break;
+        case 0x89:
+            mov_rm32_r32(cpu);
+            break;
+        default:
+            printf("EIP: %08x Op: 66 %x not implemented.\n", cpu->getLinearAddr(), op);
+            break;
+        }
+    }
+}
+
+void two_byte_inst(Pentium* cpu)
+{
+    uint8_t op = cpu->bus->read(cpu->getLinearAddr() + 1);
+    printf("0x%x\n", op);
+    if (cpu->two_byte_instrs[op] == NULL)
     {
-    case 0x83:
-        code_83(cpu);
+        printf("EIP: 0x%08x op 0f 0x%x not implemented\n", cpu->getLinearAddr(), op);
+        exit(-1);
     }
-    }
+    cpu->two_byte_instrs[op](cpu);
+}
+
+void nop(Pentium* cpu)
+{
+    (void(cpu));
 }
 
 void Pentium::reset()
@@ -104,25 +130,32 @@ void Pentium::reset()
         instrs[i] = NULL;
         two_byte_instrs[i] = NULL;
     }
-    instrs[0x0C] = or_al_imm8;
-    instrs[0x0F] = two_byte_instruction;
-    instrs[0xEA] = ptr_jump;
-    instrs[0xE4] = in_al_imm8;
-    instrs[0xE6] = out_imm8_al;
-    instrs[0xE9] = near_jump;
-    instrs[0x59] = pop_r32;
-    instrs[0x66] = operand_override;
-    instrs[0x8E] = mov_seg_rm32;
-    instrs[0x81] = code_81;
-    instrs[0x89] = mov_rm32_r32;
+    instrs[0x0F] = two_byte_inst;
+    instrs[0x21] = and_rm32_r32;
+    instrs[0x31] = xor_rm32_r32;
+    instrs[0x39] = cmp_rm32_r32;
     for (int i = 0; i < 8; i++)
     {
-        instrs[0xB8 + i] = mov_r32_imm32;
+        instrs[0x50 + i] = push_r32;
     }
-    two_byte_instrs[0x01] = code_0f_01;
-    two_byte_instrs[0x20] = mov_r32_cr;
-    two_byte_instrs[0x22] = mov_cr_r32;
+    instrs[0x66] = operand_override;
+    instrs[0x7d] = jge;
+    instrs[0x80] = code_80;
+    instrs[0x83] = code_83;
+    instrs[0x8A] = mov_r8_rm8;
+    instrs[0x8B] = mov_r32_rm32;
+    instrs[0x8E] = mov_seg_rm32;
+    for (int i = 0; i < 8; i++)
+    {
+        instrs[0xB8 + i] = mov_rm32_imm32;
+    }
+    instrs[0xC1] = code_c1;
+    instrs[0xE6] = out_imm8_al;
+    instrs[0xEB] = short_jump;
+    instrs[0xEA] = ptr_jump;
+    two_byte_instrs[0x82] = jc32;
     two_byte_instrs[0x85] = jnz32;
+    two_byte_instrs[0x87] = ja32;
 }
 
 uint32_t Pentium::seg_to_linear(SGRegister reg, uint32_t offset)
@@ -139,6 +172,10 @@ uint32_t Pentium::getLinearAddr()
     else if (!isPE && !firstClock)
     {
         return ((sgregs[(int)SGRegister::CS].base << 4) + ip.regs_16);
+    }
+    else
+    {
+        return 0;
     }
 }
 
@@ -160,20 +197,24 @@ uint16_t Pentium::get_ip()
 void Pentium::clock()
 {
     uint8_t opcode;
-    printf("0x%x\n", getLinearAddr());
     opcode = bus->read(getLinearAddr());
-    printf("0x%x\n", opcode);
+
+    printf("EIP 0x%x\n", getLinearAddr());
     
-    if (opcode == 0x2E)
+check_opcode:
+    if (opcode == 0x2E || opcode == 0x67 || opcode == 0x26 || opcode == 0x65)
     {
         ip.regs_32++;
         opcode = bus->read(getLinearAddr());
+        goto check_opcode;
     }
+    printf("0x%x\n", opcode);
     if (instrs[opcode] == NULL)
     {
         printf("PANIC: Opcode 0x%x not implemented at 0x%x\n", opcode, getLinearAddr());
         exit(-1);
     }
     instrs[opcode](this);
+    firstClock = false;
 }
 

@@ -135,6 +135,7 @@ public:
     uint32_t modrm_to_address(uint8_t mod, uint8_t rm);
     uint32_t seg_to_linear(SGRegister reg, uint32_t offset);
     uint32_t pop32();
+    void push32(uint32_t value);
 public:
     CPUState state;
     Bus* bus; // We expose the bus for instructions

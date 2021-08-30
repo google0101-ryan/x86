@@ -3,8 +3,8 @@
 #include "bus.hpp"
 #include <stddef.h>
 
-typedef void (*io_out8_t)(uint8_t data);
-typedef uint8_t (*io_in8_t)();
+typedef void (*io_out8_t)(uint16_t port, uint8_t data);
+typedef uint8_t (*io_in8_t)(uint16_t port);
 
 class IOBus
 {
