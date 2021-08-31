@@ -10,3 +10,11 @@ void mov_r8_imm8(Pentium* cpu)
         cpu->gpregs[reg].regs_8h = cpu->bus->read(cpu->getLinearAddr() + 1);
     cpu->ip.regs_32 += 2;
 }
+
+void mov_r32_imm32(Pentium* cpu)
+{
+    uint8_t reg = cpu->bus->read(cpu->getLinearAddr()) - 0xB8;
+    uint32_t value= cpu->bus->read32(cpu->getLinearAddr() + 1);
+    cpu->gpregs[reg].regs_32 = value;
+    cpu->ip.regs_32 += 5;
+}

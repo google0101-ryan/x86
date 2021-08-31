@@ -14,6 +14,7 @@ CMakeFiles/x86.dir/DMA.cpp.o
  /home/ilariryan/CLionProjects/x86/bus.hpp
  /home/ilariryan/CLionProjects/x86/cpu.hpp
  /home/ilariryan/CLionProjects/x86/device.hpp
+ /home/ilariryan/CLionProjects/x86/ram.hpp
 CMakeFiles/x86.dir/IOBus.cpp.o
  /home/ilariryan/CLionProjects/x86/IOBus.cpp
  /home/ilariryan/CLionProjects/x86/IOBus.hpp

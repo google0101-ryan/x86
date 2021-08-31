@@ -22,6 +22,26 @@ uint8_t IOBus::in8(uint16_t port)
     return in8_handlers[port](port);
 }
 
+void IOBus::out32(uint32_t port, uint32_t data)
+{
+    if (out32_handlers[port] == NULL)
+    {
+        printf("\x1b[33mWARNING: Ignored IO write to 0x%x\x1b[0m\n", port);
+        return;
+    }
+    out32_handlers[port](port, data);
+}
+
+uint32_t IOBus::in32(uint16_t port)
+{
+    if (in32_handlers[port] == NULL)
+    {
+        printf("\x1b[33mWARNING: Ignored IO read from 0x%x\x1b[0m\n", port);
+        return 0;
+    }
+    return in32_handlers[port](port);
+}
+
 void IOBus::register_io_in8(uint16_t port, io_in8_t handler)
 {
     in8_handlers[port] = handler;
@@ -30,4 +50,9 @@ void IOBus::register_io_in8(uint16_t port, io_in8_t handler)
 void IOBus::register_io_out8(uint16_t port, io_out8_t handler)
 {
     out8_handlers[port] = handler;
+}
+
+void IOBus::register_io_in32(uint16_t port, io_in32_t handler)
+{
+    in32_handlers[port] = handler;
 }

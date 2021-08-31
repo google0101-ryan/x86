@@ -6,14 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/ilariryan/CLionProjects/x86/IOBus.cpp
-IOBus.hpp
-/home/ilariryan/CLionProjects/x86/IOBus.hpp
-stdio.h
--
-stdlib.h
--
-
 /home/ilariryan/CLionProjects/x86/IOBus.hpp
 bus.hpp
 /home/ilariryan/CLionProjects/x86/bus.hpp
@@ -24,7 +16,27 @@ stddef.h
 device.hpp
 /home/ilariryan/CLionProjects/x86/device.hpp
 
+/home/ilariryan/CLionProjects/x86/cpu.hpp
+bus.hpp
+/home/ilariryan/CLionProjects/x86/bus.hpp
+IOBus.hpp
+/home/ilariryan/CLionProjects/x86/IOBus.hpp
+stddef.h
+-
+
 /home/ilariryan/CLionProjects/x86/device.hpp
 stdint.h
+-
+
+/home/ilariryan/CLionProjects/x86/modrm.hpp
+cpu.hpp
+/home/ilariryan/CLionProjects/x86/cpu.hpp
+
+/home/ilariryan/CLionProjects/x86/ops_0x0.cpp
+modrm.hpp
+/home/ilariryan/CLionProjects/x86/modrm.hpp
+cpu.hpp
+/home/ilariryan/CLionProjects/x86/cpu.hpp
+stdio.h
 -
 

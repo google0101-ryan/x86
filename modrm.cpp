@@ -167,6 +167,32 @@ uint32_t get_rm32(Pentium* cpu, ModRM* modrm)
     }
 }
 
+uint16_t get_rm16(Pentium* cpu, ModRM* modrm)
+{
+    if (modrm->mod == 3)
+    {
+        return cpu->gpregs[modrm->rm].regs_16;
+    }
+    else
+    {
+        uint32_t address = calc_memory_address(cpu, modrm);
+        return cpu->bus->read16(cpu->seg_to_linear(SGRegister::DS, address));
+    }
+}
+
+void set_rm16(Pentium* cpu, ModRM* modrm, uint16_t value)
+{
+    if (modrm->mod == 3)
+    {
+        cpu->gpregs[modrm->rm].regs_16 = value;
+    }
+    else
+    {
+        uint32_t address = calc_memory_address(cpu, modrm);
+        cpu->bus->write16(cpu->seg_to_linear(SGRegister::DS, address), value);
+    }
+}
+
 uint32_t get_rm8(Pentium* cpu, ModRM* modrm)
 {
     if (modrm->mod == 3)
@@ -197,7 +223,10 @@ void set_rm8(Pentium *cpu, ModRM* modrm, uint32_t value)
 {
     if (modrm->mod == 3)
     {
-        cpu->gpregs[modrm->rm].regs_8h = value;
+        if (modrm->rm > 4)
+            cpu->gpregs[modrm->rm].regs_8l = value;
+        else
+            cpu->gpregs[modrm->rm].regs_8h = value;
     }
     else
     {

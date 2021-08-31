@@ -169,7 +169,15 @@ void mov_rm8_r8(Pentium* cpu)
     ModRM modrm = create_modrm();
     parse_modrm(&modrm, cpu);
 
-    uint32_t r8 = cpu->gpregs[modrm.reg_index].regs_8h;
+    uint8_t r8;
+    if (modrm.reg_index < 4)
+    {
+        r8 = cpu->gpregs[modrm.reg_index].regs_8l;
+    }
+    else
+    {
+        r8 = cpu->gpregs[modrm.reg_index].regs_8h;
+    }
     set_rm8(cpu, &modrm, r8);
 }
 
@@ -186,6 +194,16 @@ void mov_rm32_r32(Pentium* cpu)
     parse_modrm(&modrm, cpu);
     uint32_t r32 = cpu->gpregs[modrm.reg_index].regs_32;
     set_rm32(cpu, &modrm, r32);
+    cpu->gpregs[(int)GPRegister32::ECX].regs_32 += 0x1;
+}
+
+void mov_rm16_r16(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+    uint16_t r16 = cpu->gpregs[modrm.reg_index].regs_16;
+    set_rm16(cpu, &modrm, r16);
 }
 
 void mov_r8_rm8(Pentium* cpu)
@@ -218,10 +236,17 @@ void mov_seg_rm32(Pentium* cpu)
     ModRM modrm = create_modrm();
     parse_modrm(&modrm, cpu);
     uint32_t rm32 = get_rm32(cpu, &modrm);
-    printf("MOV 0x%x, 0x%x\n", rm32, modrm.reg_index);
     if (modrm.reg_index == 0)
-    {
-        return;
-    }
+        return; // We don't do mov cs
+    printf("MOV 0x%x, 0x%x\n", rm32, modrm.reg_index);
     cpu->sgregs[modrm.reg_index].base = rm32;
+}
+
+void mov_rm32_seg(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+    uint32_t seg_val = cpu->sgregs[modrm.reg_index].base;
+    set_rm32(cpu, &modrm, seg_val);
 }

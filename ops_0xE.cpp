@@ -2,6 +2,14 @@
 #include "cpu.hpp"
 #include <stdio.h>
 
+void in_eax_imm8(Pentium* cpu)
+{
+    uint16_t address = cpu->bus->read(cpu->getLinearAddr() + 1);
+    uint32_t value = cpu->iobus->in32(address);
+    cpu->gpregs[(int)GPRegister32::EAX].regs_32 = value;
+    cpu->ip.regs_32 += 2;
+}
+
 void out_imm8_al(Pentium* cpu)
 {
     uint16_t address = cpu->bus->read(cpu->getLinearAddr() + 1);
@@ -64,4 +72,11 @@ void ptr_jump(Pentium* cpu)
     cpu->sgregs[(int)SGRegister::CS].base = cs_val;
     cpu->ip.regs_32 = eip_val;
     cpu->firstClock = false;
+}
+
+void call_rel32(Pentium* cpu)
+{
+    int32_t offset = cpu->bus->read32(cpu->getLinearAddr() + 1);
+    cpu->push32(cpu->ip.regs_32 + 5);
+    cpu->ip.regs_32 += (offset + 5);
 }

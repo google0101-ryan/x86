@@ -13,7 +13,8 @@ CMakeFiles/x86.dir/DMA.cpp.o: \
  ../IOBus.hpp \
  ../bus.hpp \
  ../cpu.hpp \
- ../device.hpp
+ ../device.hpp \
+ ../ram.hpp
 CMakeFiles/x86.dir/IOBus.cpp.o: \
  ../IOBus.cpp \
  ../IOBus.hpp \

@@ -3,19 +3,18 @@
 
 class CMOS
 {
-private:
-    uint8_t ram[128];
-    uint8_t addr, nmi;
-
-    time_t now;
-
-    int periodic_ticks, periodic_ticks_max;
-
-    uint32_t period;
-
-    uint64_t last_called, uip_period, last_second_update;
 public:
-    CMOS(IOBus* bus);
+    static uint8_t ram[128];
+    static uint8_t addr, nmi;
+
+    static time_t now;
+
+    static int periodic_ticks, periodic_ticks_max;
+
+    static uint32_t period;
+
+    static uint64_t last_called, uip_period, last_second_update;
+    static void create(IOBus* bus);
 };
 
 void cmos_writeb(uint8_t data);

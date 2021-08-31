@@ -1,14 +1,19 @@
 #include "cpu.hpp"
 
 /*0x00*/
+void add_rm32_r32(Pentium* cpu);
+void add_al_imm8(Pentium* cpu);
 void push_es(Pentium* cpu);
 void pop_es(Pentium* cpu);
+void or_rm16_r16(Pentium* cpu);
 void les(Pentium* cpu);
 
 /*0x10*/
 void pop_ds(Pentium* cpu);
 
 /*0x20*/
+void sub_r32_rm32(Pentium* cpu);
+void and_ax_imm16(Pentium* cpu);
 void and_rm32_r32(Pentium* cpu);
 
 void cmp_rm32_r32(Pentium* cpu);
@@ -29,33 +34,41 @@ void cmp_al_imm8(Pentium* cpu);
 void code_80(Pentium* cpu);
 void code_83(Pentium* cpu);
 void mov_rm32_r32(Pentium* cpu);
+void mov_rm16_r16(Pentium* cpu);
 void mov_r8_rm8(Pentium* cpu);
 void mov_r32_rm32(Pentium* cpu);
 void mov_seg_rm32(Pentium* cpu);
+void mov_rm32_seg(Pentium* cpu);
 
 /*0xB0*/
 void mov_r8_imm8(Pentium* cpu);
 void mov_rm8_r8(Pentium* cpu);
+void mov_r32_imm32(Pentium* cpu);
 
 /*0xA0*/
 void mov_moffs16_ax(Pentium* cpu);
 void stosb(Pentium* cpu);
+void stosd(Pentium* cpu);
 void movsb(Pentium* cpu);
 
 /*0xC0*/
 void code_c1(Pentium* cpu);
 void mov_rm32_imm32(Pentium* cpu);
 void ret(Pentium* cpu);
+void code_c1_16(Pentium* cpu);
 
 /*0xE0*/
 void jecxz(Pentium* cpu);
+void in_eax_imm8(Pentium* cpu);
 void in_al_imm8(Pentium* cpu);
 void out_imm8_al(Pentium* cpu);
 void short_jump(Pentium* cpu);
 void ptr_jump(Pentium* cpu);
+void call_rel32(Pentium* cpu);
 
 /*0xF0*/
 void cld(Pentium* cpu);
+void code_ff(Pentium* cpu);
 
 /*0x0F 0x80*/
 void jnz32(Pentium* cpu);

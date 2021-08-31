@@ -86,6 +86,15 @@ void operand_override(Pentium* cpu)
         case 0x89:
             mov_rm32_r32(cpu);
             break;
+        case 0x25:
+            and_ax_imm16(cpu);
+            break;
+        case 0xc1:
+            code_c1_16(cpu);
+            break;
+        case 0x09:
+            or_rm16_r16(cpu);
+            break;
         default:
             printf("EIP: %08x Op: 66 %x not implemented.\n", cpu->getLinearAddr(), op);
             break;
@@ -107,7 +116,7 @@ void two_byte_inst(Pentium* cpu)
 
 void nop(Pentium* cpu)
 {
-    (void(cpu));
+    cpu->ip.regs_32++;
 }
 
 static void rep(Pentium* cpu)
@@ -140,6 +149,7 @@ void Pentium::reset()
     for (size_t i = 0; i < num_gpregs; i++) {
         this->gpregs[i].regs_32 = 0;
     }
+    this->gpregs[(int)GPRegister32::ECX].regs_32 = 0xDEADBABA;
     for (size_t i = 0; i < num_sgregs; i++) {
         this->sgregs[i].selector = 0;
         this->sgregs[i].base = 0;
@@ -155,14 +165,44 @@ void Pentium::reset()
         instrs[i] = NULL;
         two_byte_instrs[i] = NULL;
     }
+    instrs[0x00] = nop;
+    instrs[0x01] = add_rm32_r32;
+    instrs[0x04] = add_al_imm8;
+    instrs[0x2B] = sub_r32_rm32;
     instrs[0x31] = xor_rm32_r32;
+    instrs[0x3C] = cmp_al_imm8;
+    for (int i = 0; i < 8; i++)
+    {
+        instrs[0x50 + i] = push_r32;
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        instrs[0x58 + i] = pop_r32;
+    }
+    instrs[0x66] = operand_override;
+    instrs[0x74] = jz;
+    instrs[0x88] = mov_r8_rm8;
+    instrs[0x89] = mov_rm32_r32;
+    instrs[0x8C] = mov_rm32_seg;
+    instrs[0x8E] = mov_seg_rm32;
+    instrs[0xAB] = stosd;
     for (int i = 0; i < 8; i++)
     {
         instrs[0xB0 + i] = mov_r8_imm8;
     }
+    for (int i = 0; i < 8; i++)
+    {
+        instrs[0xB8 + i] = mov_r32_imm32;
+    }
+    instrs[0xC3] = ret;
+    instrs[0xE3] = jecxz;
     instrs[0xE4] = in_al_imm8;
+    instrs[0xE5] = in_eax_imm8;
     instrs[0xE6] = out_imm8_al;
+    instrs[0xE8] = call_rel32;
     instrs[0xEA] = ptr_jump;
+    instrs[0xF3] = rep;
+    instrs[0xFF] = code_ff;
 }
 
 uint32_t Pentium::seg_to_linear(SGRegister reg, uint32_t offset)
