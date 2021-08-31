@@ -155,57 +155,19 @@ void Pentium::reset()
         instrs[i] = NULL;
         two_byte_instrs[i] = NULL;
     }
-    instrs[0x06] = push_es;
-    instrs[0x07] = pop_es;
-    instrs[0x0F] = two_byte_inst;
-    instrs[0x1F] = pop_ds;
-    instrs[0x21] = and_rm32_r32;
     instrs[0x31] = xor_rm32_r32;
-    instrs[0x3C] = cmp_al_imm8;
-    instrs[0x39] = cmp_rm32_r32;
     for (int i = 0; i < 8; i++)
     {
-        instrs[0x50 + i] = push_r32;
+        instrs[0xB0 + i] = mov_r8_imm8;
     }
-    for (int i = 0; i < 8; i++)
-    {
-        instrs[0x58 + i] = pop_r32;
-    }
-    instrs[0x66] = operand_override;
-    instrs[0x74] = jz;
-    instrs[0x7d] = jge;
-    instrs[0x80] = code_80;
-    instrs[0x83] = code_83;
-    instrs[0x88] = mov_r8_rm8;
-    instrs[0x89] = mov_rm32_r32;
-    instrs[0x8A] = mov_r8_rm8;
-    instrs[0x8B] = mov_r32_rm32;
-    instrs[0x8E] = mov_seg_rm32;
-    instrs[0xA4] = movsb;
-    instrs[0xAA] = stosb;
-    instrs[0xB0] = mov_r8_imm8;
-    for (int i = 0; i < 8; i++)
-    {
-        instrs[0xB8 + i] = mov_rm32_imm32;
-    }
-    instrs[0xC1] = code_c1;
-    instrs[0xC3] = ret;
-    instrs[0xC4] = les;
-    instrs[0xE3] = jecxz;
     instrs[0xE4] = in_al_imm8;
     instrs[0xE6] = out_imm8_al;
-    instrs[0xEB] = short_jump;
     instrs[0xEA] = ptr_jump;
-    instrs[0xF3] = rep;
-    instrs[0xFC] = cld;
-    two_byte_instrs[0x82] = jc32;
-    two_byte_instrs[0x85] = jnz32;
-    two_byte_instrs[0x87] = ja32;
 }
 
 uint32_t Pentium::seg_to_linear(SGRegister reg, uint32_t offset)
 {
-    return ((sgregs[(int)reg].base) + offset);
+    return ((sgregs[(int)reg].base << 4) + offset);
 }
 
 uint32_t Pentium::getLinearAddr()

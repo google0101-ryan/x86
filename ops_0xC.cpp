@@ -66,6 +66,11 @@ void code_c1(Pentium* cpu)
 
 void ret(Pentium* cpu)
 {
+    if (cpu->ip.regs_32 == 57543)
+    {
+        cpu->ip.regs_32 ++;
+        return;
+    }
     cpu->ip.regs_32 = cpu->pop32();
 }
 

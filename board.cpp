@@ -1,14 +1,14 @@
 #include "board.hpp"
 #include <fstream>
 
-Board::Board()
+Board::Board(char* file)
 {
     bus = new Bus();
     iobus = new IOBus();
     cmos = new CMOS(iobus);
     DMA::create(iobus);
     std::ifstream bios;
-    bios.open("fw/bios.bin");
+    bios.open(file);
     bios.seekg(0, std::ios::end);
     size_t fileSize = bios.tellg();
     if (fileSize > UINT32_MAX)

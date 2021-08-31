@@ -29,8 +29,9 @@ void in_al_imm8(Pentium* cpu)
 {
     uint16_t address = cpu->bus->read(cpu->getLinearAddr() + 1);
     uint8_t value = cpu->iobus->in8(address);
-    cpu->gpregs[(int)GPRegister8::AL].regs_8l;
+    cpu->gpregs[(int)GPRegister8::AL].regs_8l = value;
     cpu->ip.regs_32 += 2;
+    printf("IN AL, 0x%x\n", address);
 }
 
 void short_jump(Pentium* cpu)

@@ -10,6 +10,53 @@ void xor_rm32_r32(Pentium* cpu)
     uint32_t r32_val = cpu->gpregs[modrm.reg_index].regs_32;
     uint32_t result = rm32_val ^ r32_val;
     set_rm32(cpu, &modrm, result);
+    int signr = (result >> 31) & 1;
+    cpu->eflags &= ~CARRY_FLAG;
+    if (result == 0)
+    {
+        cpu->eflags |= ZERO_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~ZERO_FLAG;
+    }
+    if (signr)
+    {
+        cpu->eflags |= SIGN_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~SIGN_FLAG;
+    }
+    cpu->eflags &= ~OVERFLOW_FLAG;
+}
+
+void xor_eax_imm32(Pentium* cpu)
+{
+    uint32_t eax_val = cpu->gpregs[(int)GPRegister32::EAX].regs_32;
+    uint32_t imm32_val = cpu->bus->read32(cpu->getLinearAddr() + 1);
+    uint32_t result = eax_val ^ imm32_val;
+    cpu->gpregs[(int)GPRegister32::EAX].regs_32 = result;
+    cpu->ip.regs_32 += 5;
+    int signr = (result >> 31) & 1;
+    cpu->eflags &= ~CARRY_FLAG;
+    if (result == 0)
+    {
+        cpu->eflags |= ZERO_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~ZERO_FLAG;
+    }
+    if (signr)
+    {
+        cpu->eflags |= SIGN_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~SIGN_FLAG;
+    }
+    cpu->eflags &= ~OVERFLOW_FLAG;
 }
 
 void cmp_rm32_r32(Pentium* cpu)

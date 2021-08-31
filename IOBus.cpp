@@ -6,7 +6,7 @@ void IOBus::out8(uint32_t port, uint8_t data)
 {
     if (out8_handlers[port] == NULL)
     {
-        printf("WARNING: Ignored IO write to 0x%x\n", port);
+        printf("\x1b[33mWARNING: Ignored IO write to 0x%x\x1b[0m\n", port);
         return;
     }
     out8_handlers[port](port, data);
@@ -16,7 +16,7 @@ uint8_t IOBus::in8(uint16_t port)
 {
     if (in8_handlers[port] == NULL)
     {
-        printf("WARNING: Ignored IO read from 0x%x\n", port);
+        printf("\x1b[33mWARNING: Ignored IO read from 0x%x\x1b[0m\n", port);
         return 0;
     }
     return in8_handlers[port](port);

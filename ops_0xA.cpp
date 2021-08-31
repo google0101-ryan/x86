@@ -41,3 +41,11 @@ void movsb(Pentium* cpu)
     }
     cpu->ip.regs_32++;
 }
+
+void mov_moffs16_ax(Pentium* cpu)
+{
+    uint32_t offset = cpu->bus->read32(cpu->getLinearAddr() + 1);
+    uint16_t ax_val = cpu->gpregs[(int)GPRegister16::AX].regs_16;
+    cpu->bus->write16(cpu->seg_to_linear(SGRegister::DS, offset), ax_val);
+    cpu->ip.regs_32 += 5;
+}

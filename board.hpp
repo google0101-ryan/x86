@@ -18,7 +18,7 @@ private:
     ROM* rom1, *rom2;
     Pentium* cpu;
 public:
-    Board();
+    Board(char* file);
     void Clock();
     void Run();
 };

@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ilariryan/CLionProjects/x86/IOBus.cpp
+IOBus.hpp
+/home/ilariryan/CLionProjects/x86/IOBus.hpp
+stdio.h
+-
+stdlib.h
+-
+
+/home/ilariryan/CLionProjects/x86/IOBus.hpp
+bus.hpp
+/home/ilariryan/CLionProjects/x86/bus.hpp
+stddef.h
+-
+
+/home/ilariryan/CLionProjects/x86/bus.hpp
+device.hpp
+/home/ilariryan/CLionProjects/x86/device.hpp
+
+/home/ilariryan/CLionProjects/x86/device.hpp
+stdint.h
+-
+

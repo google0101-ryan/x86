@@ -19,8 +19,10 @@ void pop_r32(Pentium* cpu);
 
 void jge(Pentium* cpu);
 void jz(Pentium* cpu);
+void jg(Pentium* cpu);
 
 void xor_rm32_r32(Pentium* cpu);
+void xor_eax_imm32(Pentium* cpu);
 void cmp_al_imm8(Pentium* cpu);
 
 /*0x80*/
@@ -36,6 +38,7 @@ void mov_r8_imm8(Pentium* cpu);
 void mov_rm8_r8(Pentium* cpu);
 
 /*0xA0*/
+void mov_moffs16_ax(Pentium* cpu);
 void stosb(Pentium* cpu);
 void movsb(Pentium* cpu);
 

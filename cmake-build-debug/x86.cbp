@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="x86"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/ilariryan/CLionProjects/x86/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/ilariryan/CLionProjects/x86/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/ilariryan/CLionProjects/x86/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="x86">
+				<Option output="/home/ilariryan/CLionProjects/x86/cmake-build-debug/x86" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ilariryan/CLionProjects/x86/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ilariryan/CLionProjects/x86/."/>
+					<Add directory="/usr/include/c++/8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/8"/>
+					<Add directory="/usr/include/c++/8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 x86"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="x86/fast">
+				<Option output="/home/ilariryan/CLionProjects/x86/cmake-build-debug/x86" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ilariryan/CLionProjects/x86/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ilariryan/CLionProjects/x86/."/>
+					<Add directory="/usr/include/c++/8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/8"/>
+					<Add directory="/usr/include/c++/8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 x86/fast"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/ilariryan/CLionProjects/x86/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/CMOS.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/CMOS.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/DMA.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/DMA.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/IOBus.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/IOBus.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/board.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/board.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/bus.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/bus.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/cpu.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/cpu.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/device.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/instruction_defs.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/main.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/modrm.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/modrm.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0x0.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0x1.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0x2.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0x3.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0x5.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0x7.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0x8.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0xA.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0xB.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0xC.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0xE.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_0xF.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ops_f8.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ram.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/ram.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/rom.cpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/rom.hpp">
+			<Option target="x86"/>
+		</Unit>
+		<Unit filename="/home/ilariryan/CLionProjects/x86/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
