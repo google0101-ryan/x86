@@ -1,5 +1,6 @@
-#include "cpu.hpp"
+#include "hw/cpu.hpp"
 #include "modrm.hpp"
+#include <stdio.h>
 
 void xor_rm32_r32(Pentium* cpu)
 {
@@ -11,6 +12,72 @@ void xor_rm32_r32(Pentium* cpu)
     uint32_t result = rm32_val ^ r32_val;
     set_rm32(cpu, &modrm, result);
     int signr = (result >> 31) & 1;
+    cpu->eflags &= ~CARRY_FLAG;
+    if (result == 0)
+    {
+        cpu->eflags |= ZERO_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~ZERO_FLAG;
+    }
+    if (signr)
+    {
+        cpu->eflags |= SIGN_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~SIGN_FLAG;
+    }
+    cpu->eflags &= ~OVERFLOW_FLAG;
+}
+
+void xor_rm16_r16(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+    uint16_t rm16_val = get_rm16(cpu, &modrm);
+    uint32_t r16_val = cpu->gpregs[modrm.reg_index].regs_16;
+    uint32_t result = rm16_val ^ r16_val;
+    set_rm16(cpu, &modrm, result);
+    int signr = (result >> 15) & 1;
+    printf("XOR 0x%x, 0x%x\n", modrm.rm, modrm.reg_index);
+    cpu->eflags &= ~CARRY_FLAG;
+    if (result == 0)
+    {
+        cpu->eflags |= ZERO_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~ZERO_FLAG;
+    }
+    if (signr)
+    {
+        cpu->eflags |= SIGN_FLAG;
+    }
+    else
+    {
+        cpu->eflags &= ~SIGN_FLAG;
+    }
+    cpu->eflags &= ~OVERFLOW_FLAG;
+}
+
+void xor_rm8_r8(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+    uint8_t rm8_val = get_rm8(cpu, &modrm);
+    uint8_t r8_val;
+    if (modrm.reg_index < 4)
+        r8_val = cpu->gpregs[modrm.reg_index].regs_8h;
+    else
+        r8_val = cpu->gpregs[modrm.reg_index].regs_8l;
+    uint8_t result = rm8_val ^ r8_val;
+    set_rm16(cpu, &modrm, result);
+    int signr = (result >> 7) & 1;
+    printf("XOR 0x%x, 0x%x\n", modrm.rm, modrm.reg_index);
     cpu->eflags &= ~CARRY_FLAG;
     if (result == 0)
     {

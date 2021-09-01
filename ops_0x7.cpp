@@ -1,5 +1,5 @@
 #include "modrm.hpp"
-#include "cpu.hpp"
+#include "hw/cpu.hpp"
 
 #define DEFINE_NEAR_JX(flag, flag_name) \
     void j##flag(Pentium* cpu) \
@@ -14,6 +14,7 @@
     }
 
 DEFINE_NEAR_JX(z, ZERO_FLAG);
+DEFINE_NEAR_JX(o, OVERFLOW_FLAG);
 
 void jge(Pentium* cpu)
 {

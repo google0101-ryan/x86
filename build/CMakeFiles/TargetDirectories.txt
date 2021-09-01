@@ -1,0 +1,3 @@
+/home/ilariryan/x86/build/CMakeFiles/rebuild_cache.dir
+/home/ilariryan/x86/build/CMakeFiles/x86.dir
+/home/ilariryan/x86/build/CMakeFiles/edit_cache.dir

@@ -1,5 +1,5 @@
 #include "modrm.hpp"
-#include "cpu.hpp"
+#include "hw/cpu.hpp"
 #include <stdio.h>
 
 void add_rm32_r32(Pentium* cpu)
@@ -44,4 +44,21 @@ void or_rm16_r16(Pentium* cpu)
     uint16_t r16_val = cpu->gpregs[modrm.reg_index].regs_16;
     uint16_t result = rm16_val | r16_val;
     set_rm16(cpu, &modrm, result);
+}
+
+void or_rm32_r32(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+    uint32_t rm32_val = get_rm32(cpu, &modrm);
+    uint32_t r32_val = cpu->gpregs[modrm.reg_index].regs_32;
+    uint32_t result = rm32_val | r32_val;
+    set_rm32(cpu, &modrm, result);
+}
+
+void push_cs(Pentium* cpu)
+{
+    cpu->push32(cpu->sgregs[(int)SGRegister::CS].base);
+    cpu->ip.regs_32++;
 }

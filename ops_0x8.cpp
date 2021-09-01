@@ -1,7 +1,8 @@
 #include "modrm.hpp"
-#include "cpu.hpp"
+#include "hw/cpu.hpp"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 
 static void cmp_rm8_imm8(Pentium* cpu, ModRM* modrm)
 {
@@ -194,7 +195,6 @@ void mov_rm32_r32(Pentium* cpu)
     parse_modrm(&modrm, cpu);
     uint32_t r32 = cpu->gpregs[modrm.reg_index].regs_32;
     set_rm32(cpu, &modrm, r32);
-    cpu->gpregs[(int)GPRegister32::ECX].regs_32 += 0x1;
 }
 
 void mov_rm16_r16(Pentium* cpu)
@@ -249,4 +249,27 @@ void mov_rm32_seg(Pentium* cpu)
     parse_modrm(&modrm, cpu);
     uint32_t seg_val = cpu->sgregs[modrm.reg_index].base;
     set_rm32(cpu, &modrm, seg_val);
+}
+
+void mov_seg_rm16(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+    if (modrm.reg_index == (int)SGRegister::CS)
+    {
+        printf("PANIC: INVALID MOV CS\n");
+        exit(-1);
+    }
+    uint16_t rm16 = get_rm16(cpu, &modrm);
+    cpu->sgregs[modrm.reg_index].base = rm16;
+}
+
+void mov_rm16_seg(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+    uint32_t seg_val = cpu->sgregs[modrm.reg_index].base;
+    set_rm16(cpu, &modrm, seg_val);
 }

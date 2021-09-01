@@ -1,5 +1,5 @@
 #include "modrm.hpp"
-#include "cpu.hpp"
+#include "hw/cpu.hpp"
 
 void mov_r8_imm8(Pentium* cpu)
 {
@@ -17,4 +17,12 @@ void mov_r32_imm32(Pentium* cpu)
     uint32_t value= cpu->bus->read32(cpu->getLinearAddr() + 1);
     cpu->gpregs[reg].regs_32 = value;
     cpu->ip.regs_32 += 5;
+}
+
+void mov_r16_imm16(Pentium* cpu)
+{
+    uint8_t reg = cpu->bus->read(cpu->getLinearAddr()) - 0xB8;
+    uint16_t value = cpu->bus->read16(cpu->getLinearAddr() + 1);
+    cpu->gpregs[reg].regs_16 = value;
+    cpu->ip.regs_32 += 3;
 }

@@ -1,4 +1,4 @@
-#include "cpu.hpp"
+#include "hw/cpu.hpp"
 #include "modrm.hpp"
 #include <stdlib.h>
 #include <stdio.h>
@@ -146,12 +146,8 @@ void code_c1_16(Pentium* cpu)
 
 void ret(Pentium* cpu)
 {
-    if (cpu->ip.regs_32 == 57543)
-    {
-        cpu->ip.regs_32 ++;
-        return;
-    }
     cpu->ip.regs_32 = cpu->pop32();
+    printf("RET 0x%x\n (EIP 0x%x)\n", cpu->getLinearAddr(), cpu->ip.regs_32);
 }
 
 void load_seg_r32(Pentium* cpu, int seg_index, ModRM* modrm)
@@ -169,4 +165,14 @@ void les(Pentium* cpu)
     ModRM modrm = create_modrm();
     parse_modrm(&modrm, cpu);
     load_seg_r32(cpu, (int)SGRegister::ES, &modrm);
+}
+
+void mov_rm8_imm8(Pentium* cpu)
+{
+    cpu->ip.regs_32++;
+    ModRM modrm = create_modrm();
+    parse_modrm(&modrm, cpu);
+    uint8_t value = cpu->bus->read(cpu->getLinearAddr());
+    cpu->ip.regs_32++;
+    set_rm8(cpu, &modrm, value);
 }
